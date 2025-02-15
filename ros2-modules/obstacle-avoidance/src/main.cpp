@@ -1,17 +1,4 @@
-#include <common/base_publish_node.h>
-
-class ObstacleAvoidance : public BasePublishNode
-{
-public:
-    ObstacleAvoidance();
-    ~ObstacleAvoidance() = default;
-};
-
-ObstacleAvoidance::ObstacleAvoidance()
-    : BasePublishNode("ObstacleAvoidance")
-{
-    // Nothing so far
-}
+#include <obstacle-avoidance/obstacle_avoidance.h>
 
 int main(int argc, char * argv[])
 {

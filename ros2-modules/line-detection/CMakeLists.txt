@@ -11,8 +11,18 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(common REQUIRED)
 
-add_executable(line_detection src/main.cpp)
+include_directories(include)
+
+add_executable(line_detection src/main.cpp
+                              src/line_detection.cpp
+)
 ament_target_dependencies(line_detection common)
+
+install(TARGETS
+        line_detection
+        DESTINATION
+        lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -20,11 +30,5 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-
-install(TARGETS
-        line_detection
-        DESTINATION
-        lib/${PROJECT_NAME}
-)
 
 ament_package()

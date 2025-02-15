@@ -4,7 +4,7 @@ A very basic self driving arduino car
 
 # Features
 - path planning
-- obastacle avoidance
+- obstacle avoidance
 - line holding
 - motion plaing
 - manual control

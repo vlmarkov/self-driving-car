@@ -11,8 +11,19 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(common REQUIRED)
 
-add_executable(obstacle_avoidance src/main.cpp)
+include_directories(include)
+
+add_executable(obstacle_avoidance src/main.cpp
+                                  src/obstacle_avoidance.cpp 
+)
+
 ament_target_dependencies(obstacle_avoidance common)
+
+install(TARGETS
+        obstacle_avoidance
+        DESTINATION
+        lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -20,11 +31,5 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-
-install(TARGETS
-        obstacle_avoidance
-        DESTINATION
-        lib/${PROJECT_NAME}
-)
 
 ament_package()

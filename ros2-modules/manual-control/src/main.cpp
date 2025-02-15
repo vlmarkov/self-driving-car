@@ -1,17 +1,4 @@
-#include <common/base_publish_node.h>
-
-class ManualControl : public BasePublishNode
-{
-public:
-    ManualControl();
-    ~ManualControl() = default;
-};
-
-ManualControl::ManualControl()
-    : BasePublishNode("ManualControl")
-{
-    // Nothing so far
-}
+#include <manual-control/manual_control.h>
 
 int main(int argc, char * argv[])
 {

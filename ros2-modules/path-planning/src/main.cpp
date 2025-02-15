@@ -1,17 +1,4 @@
-#include <common/base_publish_node.h>
-
-class PathPlanning : public BasePublishNode
-{
-public:
-    PathPlanning();
-    ~PathPlanning() = default;
-};
-
-PathPlanning::PathPlanning()
-    : BasePublishNode("PathPlanning")
-{
-    // Nothing so far
-}
+#include <path-planning/path_planning.h>
 
 int main(int argc, char * argv[])
 {

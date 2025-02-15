@@ -1,17 +1,4 @@
-#include <common/base_publish_node.h>
-
-class MotionCalibration : public BasePublishNode
-{
-public:
-    MotionCalibration();
-    ~MotionCalibration() = default;
-};
-
-MotionCalibration::MotionCalibration()
-    : BasePublishNode("MotionCalibration")
-{
-    // Nothing so far
-}
+#include <motion-calibration/motion_calibration.h>
 
 int main(int argc, char * argv[])
 {
