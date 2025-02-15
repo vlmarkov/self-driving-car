@@ -10,13 +10,28 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 
+find_package(common REQUIRED)
+find_package(manual-control REQUIRED)
+find_package(path-planning REQUIRED)
+find_package(obstacle-avoidance REQUIRED)
+find_package(line-detection REQUIRED)
+find_package(motion-calibration REQUIRED)
+
 include_directories(include)
 
 add_executable(main_pipeline src/main.cpp
                              src/main_pipeline.cpp
 )
 
-ament_target_dependencies(main_pipeline rclcpp std_msgs)
+ament_target_dependencies(main_pipeline
+                          rclcpp
+                          std_msgs
+                          common
+                          manual-control
+                          path-planning
+                          obstacle-avoidance
+                          line-detection
+                          motion-calibration)
 
 install(TARGETS
         main_pipeline

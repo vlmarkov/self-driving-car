@@ -18,6 +18,19 @@ add_executable(line_detection src/main.cpp
 )
 ament_target_dependencies(line_detection common)
 
+ament_export_include_directories(include)
+
+install(
+  DIRECTORY include/line-detection
+  DESTINATION include
+)
+
+install(
+  TARGETS line_detection
+  EXPORT line_detection
+  INCLUDES DESTINATION include
+)
+
 install(TARGETS
         line_detection
         DESTINATION

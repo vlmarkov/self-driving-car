@@ -19,6 +19,13 @@ add_executable(motion_calibration src/main.cpp
 
 ament_target_dependencies(motion_calibration common)
 
+ament_export_include_directories(include)
+
+install(
+  DIRECTORY include/motion-calibration
+  DESTINATION include
+)
+
 install(TARGETS
         motion_calibration
         DESTINATION

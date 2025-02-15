@@ -1,9 +1,25 @@
 #include <main-pipeline/main_pipeline.h>
 
+#include <manual-control/manual_control.h>
+#include <path-planning/path_planning.h>
+#include <obstacle-avoidance/obstacle_avoidance.h>
+#include <line-detection/line_detection.h>
+#include <motion-calibration/motion_calibration.h>
+
 int main(int argc, char * argv[])
 {
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<MainPipeline>());
+
+    auto main_pipeline = std::make_shared<MainPipeline>();
+
+    main_pipeline->add_module(ManualControl::kName);
+    main_pipeline->add_module(PathPlanning::kName);
+    main_pipeline->add_module(ObstacleAvoidance::kName);
+    main_pipeline->add_module(LineDetection::kName);
+    main_pipeline->add_module(MotionCalibration::kName);
+
+    rclcpp::spin(main_pipeline);
     rclcpp::shutdown();
+
     return 0;
 }

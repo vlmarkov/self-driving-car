@@ -19,6 +19,13 @@ add_executable(path_planning src/main.cpp
 
 ament_target_dependencies(path_planning common)
 
+ament_export_include_directories(include)
+
+install(
+  DIRECTORY include/path-planning
+  DESTINATION include
+)
+
 install(TARGETS
         path_planning
         DESTINATION

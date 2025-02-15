@@ -19,6 +19,13 @@ add_executable(obstacle_avoidance src/main.cpp
 
 ament_target_dependencies(obstacle_avoidance common)
 
+ament_export_include_directories(include)
+
+install(
+  DIRECTORY include/obstacle-avoidance
+  DESTINATION include
+)
+
 install(TARGETS
         obstacle_avoidance
         DESTINATION

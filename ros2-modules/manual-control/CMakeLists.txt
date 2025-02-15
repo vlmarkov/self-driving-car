@@ -19,8 +19,10 @@ add_executable(manual_control src/main.cpp
 
 ament_target_dependencies(manual_control common)
 
+ament_export_include_directories(include)
+
 install(
-  DIRECTORY include
+  DIRECTORY include/manual-control
   DESTINATION include
 )
 

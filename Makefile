@@ -1,4 +1,4 @@
-all: common main-pipeline line-detection manual-control obstacle-avoidance path-planning motion-calibration
+all: common line-detection manual-control obstacle-avoidance path-planning motion-calibration main-pipeline
 
 configure-ros2-build:
 	source /opt/ros/jazzy/setup.bash

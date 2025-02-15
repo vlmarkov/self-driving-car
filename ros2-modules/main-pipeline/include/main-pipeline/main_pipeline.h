@@ -3,16 +3,16 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
+#include <vector>
+
 class MainPipeline : public rclcpp::Node
 {
 public:
     MainPipeline();
     ~MainPipeline() = default;
 
+    void add_module(const std::string& name);
+
 private:
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr manual_control_;
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr path_planning_;
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr obstacle_avoidance_;
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr line_detection_;
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr motion_calibration_;
+    std::vector<rclcpp::Subscription<std_msgs::msg::String>::SharedPtr> module_subscriptions;
 };
