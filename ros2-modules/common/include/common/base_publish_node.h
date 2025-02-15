@@ -9,11 +9,13 @@
 class BasePublishNode : public rclcpp::Node
 {
 public:
-    BasePublishNode(const std::string& name);
+    BasePublishNode(const std::string& topic_name);
     ~BasePublishNode() = default;
 
 private:
     const std::string name_;
     rclcpp::TimerBase::SharedPtr timer_;
+
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
 };
