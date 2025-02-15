@@ -17,3 +17,8 @@ path-planning:
 
 motion-calibration:
 	colcon build --packages-select motion-calibration
+
+clear:
+	rm -Rf build
+	rm -Rf install
+	rm -Rf log
