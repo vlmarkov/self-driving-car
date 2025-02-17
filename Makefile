@@ -1,4 +1,4 @@
-all: common line-detection manual-control obstacle-avoidance path-planning motion-calibration main-pipeline
+all: interfaces common line-detection manual-control obstacle-avoidance path-planning motion-calibration main-pipeline
 
 configure-ros2-build:
 	source /opt/ros/jazzy/setup.bash
@@ -6,6 +6,9 @@ configure-ros2-build:
 
 configure-ros2-run:
 	source install/local_setup.bash
+
+interfaces:
+	colcon build --packages-select interfaces
 
 common:
 	colcon build --packages-select common

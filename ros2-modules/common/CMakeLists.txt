@@ -12,10 +12,11 @@ include_directories(include)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(interfaces REQUIRED)
 
 add_library(common src/base_publish_node.cpp)
 
-ament_target_dependencies(common rclcpp std_msgs)
+ament_target_dependencies(common rclcpp std_msgs interfaces)
 ament_export_targets(common HAS_LIBRARY_TARGET)
 
 if(BUILD_TESTING)

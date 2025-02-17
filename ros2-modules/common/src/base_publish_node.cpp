@@ -11,6 +11,9 @@ BasePublishNode::BasePublishNode(const std::string& topic_name)
     publisher_ = this->create_publisher<std_msgs::msg::String>(name_, 100);
         
     auto timer_callback = [this]() -> void {
+        // TODO: !!!
+        //auto mv = interfaces::msg::MotionVector();
+
         auto message = std_msgs::msg::String();
         message.data = name_;
         RCLCPP_INFO(this->get_logger(), "I Publishing: '%s'", message.data.c_str());

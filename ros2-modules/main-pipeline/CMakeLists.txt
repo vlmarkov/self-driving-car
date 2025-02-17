@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(interfaces REQUIRED)
 
 find_package(common REQUIRED)
 find_package(manual-control REQUIRED)

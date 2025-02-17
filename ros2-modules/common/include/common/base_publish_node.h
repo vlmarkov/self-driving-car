@@ -5,6 +5,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
+#include "interfaces/msg/motion_vector.hpp"
 
 class BasePublishNode : public rclcpp::Node
 {
