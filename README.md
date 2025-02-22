@@ -30,9 +30,9 @@ source install/local_setup.bash
 2. Choose module to run
 ```
 ros2 run main-pipeline main_pipeline
-ros2 run line-detection line_detection
 ros2 run manual-control manual_control
-ros2 run obstacle-avoidance obstacle_avoidance
 ros2 run path-planning path_planning
+ros2 run obstacle-avoidance obstacle_avoidance
+ros2 run line-detection line_detection
 ros2 run motion-calibration motion_calibration
 ```

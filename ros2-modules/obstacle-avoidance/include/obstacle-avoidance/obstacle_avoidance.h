@@ -1,12 +1,15 @@
 #pragma once
 
-#include <common/base_publish_node.h>
+#include <common/base_pub_sub_node.h>
 
-class ObstacleAvoidance : public BasePublishNode
+class ObstacleAvoidance
 {
 public:
     static constexpr auto kName{"ObstacleAvoidance"};
 
-    ObstacleAvoidance();
+    ObstacleAvoidance(std::shared_ptr<IPubSubNode> pub_sub_node);
     ~ObstacleAvoidance() = default;
+
+private:
+    std::shared_ptr<IPubSubNode> pub_sub_node_;
 };
