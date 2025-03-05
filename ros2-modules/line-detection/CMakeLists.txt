@@ -45,3 +45,14 @@ if(BUILD_TESTING)
 endif()
 
 ament_package()
+
+find_package(OpenCV REQUIRED )
+
+include_directories(${OpenCV_INCLUDE_DIRS})
+
+add_executable(line_detection_shell_app
+               src/shell_app.cpp
+               src/lane.cpp
+               src/line_detection_module.cpp
+)
+TARGET_LINK_LIBRARIES(line_detection_shell_app ${OpenCV_LIBS})
