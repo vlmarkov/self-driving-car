@@ -15,6 +15,12 @@
 
 #include "lane.h"
 
+struct LaneDetectionInfo {
+    cv::Mat frame;
+    std::string direction;
+    double steer_angle;
+};
+
 class LaneDetectionModule {
 public:
     LaneDetectionModule();
@@ -28,9 +34,10 @@ public:
     void extractLanes(const cv::Mat& src, cv::Mat& dst, Lane& lane1, Lane& lane2, int curveFlag);
     void fitPoly(const std::vector<cv::Point>& src, cv::Mat& dst, int order);
     double getDriveHeading(Lane& lane1, Lane& lane2, std::string& direction);
-    void displayOutput(const cv::Mat& src, cv::Mat& src2, cv::Mat& dst, Lane& lane1, Lane& lane2, cv::Mat inv);
 
-    bool detectLane(std::string videoName);
+    LaneDetectionInfo displayOutput(const cv::Mat& src, cv::Mat& src2, cv::Mat& dst, Lane& lane1, Lane& lane2, cv::Mat inv);
+    LaneDetectionInfo detectLane(cv::Mat frame);
+
     cv::Scalar getYellowMax();
     cv::Scalar getYellowMin();
     void setYellowMax(cv::Scalar value);
@@ -41,9 +48,8 @@ public:
     int getGrayScaleMax();
 
 private:
-    cv::Scalar yellowMin;  // max possible RGB values of yellow
-    cv::Scalar yellowMax;  // min possible RGB values of yellow
-    int grayscaleMin;      // min possible grayscale value for white in our video
-    int grayscaleMax;      // max possible grayscale value for white in our video
-    std::string videoName; // specify video name
+    cv::Scalar yellowMin_;  // max possible RGB values of yellow
+    cv::Scalar yellowMax_;  // min possible RGB values of yellow
+    int grayscaleMin_;      // min possible grayscale value for white in our video
+    int grayscaleMax_;      // max possible grayscale value for white in our video
 };

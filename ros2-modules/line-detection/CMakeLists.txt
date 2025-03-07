@@ -10,7 +10,9 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(common REQUIRED)
 find_package(interfaces REQUIRED)
+find_package(OpenCV REQUIRED )
 
+include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(include)
 
 add_executable(line_detection src/main.cpp
@@ -37,18 +39,36 @@ install(TARGETS
         lib/${PROJECT_NAME}
 )
 
+enable_testing()
+
 if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  set(ament_cmake_copyright_FOUND TRUE)
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
+  #find_package(ament_lint_auto REQUIRED)
+  #set(ament_cmake_copyright_FOUND TRUE)
+  #set(ament_cmake_cpplint_FOUND TRUE)
+  #ament_lint_auto_find_test_dependencies()
+
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(${PROJECT_NAME}_lane_tests tests/lane_tests.cpp
+                                             src/lane.cpp)
+
+  target_include_directories(${PROJECT_NAME}_lane_tests PUBLIC
+                             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                             $<INSTALL_INTERFACE:include>
+  )
+  target_link_libraries(${PROJECT_NAME}_lane_tests ${OpenCV_LIBS})
+
+  ament_add_gtest(${PROJECT_NAME}_line_detection_module_tests tests/line_detection_module_tests.cpp
+                                                              src/line_detection_module.cpp
+                                                              src/lane.cpp)
+  target_include_directories(${PROJECT_NAME}_line_detection_module_tests PUBLIC
+                             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                             $<INSTALL_INTERFACE:include>
+  )
+  target_link_libraries(${PROJECT_NAME}_line_detection_module_tests ${OpenCV_LIBS})
+
 endif()
 
 ament_package()
-
-find_package(OpenCV REQUIRED )
-
-include_directories(${OpenCV_INCLUDE_DIRS})
 
 add_executable(line_detection_shell_app
                src/shell_app.cpp

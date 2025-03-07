@@ -1,11 +1,10 @@
 #include <line-detection/lane_detection_module.h>
 
 LaneDetectionModule::LaneDetectionModule() {
-    yellowMin = cv::Scalar(20, 100, 100);  // yellow lane min threshold
-    yellowMax = cv::Scalar(30, 255, 255);  // yellow lane max threshold
-    grayscaleMin = 200;  // white lane min threshold
-    grayscaleMax = 255;  // white lane max threshold
-    videoName = "xyz.mp4";  // specify default video name
+    yellowMin_ = cv::Scalar(20, 100, 100);  // yellow lane min threshold
+    yellowMax_ = cv::Scalar(30, 255, 255);  // yellow lane max threshold
+    grayscaleMin_ = 200;  // white lane min threshold
+    grayscaleMax_ = 255;  // white lane max threshold
 }
 
 LaneDetectionModule::~LaneDetectionModule() {}
@@ -21,7 +20,7 @@ void LaneDetectionModule::thresholdImageY(const cv::Mat& src, cv::Mat& dst) {
     cv::cvtColor(src, dst, cv::COLOR_BGR2HLS);
 
     // use white thresholding values to detect only road lanes
-    cv::inRange(dst, yellowMin, yellowMax, dst);
+    cv::inRange(dst, yellowMin_, yellowMax_, dst);
 }
 
 void LaneDetectionModule::thresholdImageW(const cv::Mat& src, cv::Mat& dst) {
@@ -29,7 +28,7 @@ void LaneDetectionModule::thresholdImageW(const cv::Mat& src, cv::Mat& dst) {
     cv::cvtColor(src, dst, cv::COLOR_RGB2GRAY);
 
     // use white thresholding values to detect only road lanes
-    cv::inRange(dst, grayscaleMin, grayscaleMax, dst);
+    cv::inRange(dst, grayscaleMin_, grayscaleMax_, dst);
 }
 
 void LaneDetectionModule::extractROI(const cv::Mat& src, cv::Mat& dst) {
@@ -322,7 +321,7 @@ double LaneDetectionModule::getDriveHeading(Lane& lane1, Lane& lane2, std::strin
   return modifiedSlope;
 }
 
-void LaneDetectionModule::displayOutput(const cv::Mat& src, cv::Mat& src2, cv::Mat& dst, Lane& lane1, Lane& lane2, cv::Mat inv) {
+LaneDetectionInfo LaneDetectionModule::displayOutput(const cv::Mat& src, cv::Mat& src2, cv::Mat& dst, Lane& lane1, Lane& lane2, cv::Mat inv) {
     std::vector<int> yaxis = { 15, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 715 };
 
     cv::Mat dispOutput;
@@ -403,116 +402,109 @@ void LaneDetectionModule::displayOutput(const cv::Mat& src, cv::Mat& src2, cv::M
     }
 
     std::string result = "Drive angle: " + headStr + " degrees.";
-    std::cout << result << " Action: " << direction << std::endl;
+    //std::cout << result << " Action: " << direction << std::endl;
     cv::putText(unwarpedColor, result, cv::Point(500, 50), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 255, 255), 2);
     cv::putText(unwarpedColor, direction, cv::Point(550, 100), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 255, 255), 2);
-    cv::putText(unwarpedColor, "Press C to exit.", cv::Point(1000, 50), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 0, 255), 2);
+    //cv::putText(unwarpedColor, "Press C to exit.", cv::Point(1000, 50), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 0, 255), 2);
     cv::putText(unwarpedColor, "Lane Detection", cv::Point(75, 50), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(153, 51, 255), 2);
 
     unwarpedColor.copyTo(dst);
+
+    return {
+        .frame = dst,
+        .direction = direction,
+        .steer_angle = std::stod(headStr)
+    };
 }
 
-bool LaneDetectionModule::detectLane(std::string file_name) {
-    cv::namedWindow("Lane Detection", 1);
-
-    Lane leftLane(2, "red", 10), rightLane(2, "green", 10);
-    int frameNumber = 0;
-
-    for (;;) {
-        cv::Mat whiteThreshold, yellowThreshold, combinedThreshold,
-            distColor, gaussianBlurImage, ROIImage, warpedImage, undistortedImage,
-            laneColor, finalOutput;
-
-        auto frame = cv::imread(file_name, cv::IMREAD_UNCHANGED);
-        if (frame.empty()) {
-            return true;
-        }
-
-        std::cout << "Frame number: " << frameNumber << " : ";
-        // Step 1: Undistort the input image given camera params
-        undistortImage(frame, undistortedImage);
-
-        // Step 2: Get white lane
-        thresholdImageW(undistortedImage, whiteThreshold);
-
-        // Step 2: Get Yellow lane
-        thresholdImageY(undistortedImage, yellowThreshold);
-
-        // Step 2: Combine both the masks
-        bitwise_or(whiteThreshold, yellowThreshold, combinedThreshold);
-
-        combinedThreshold = ~combinedThreshold;
-
-        // Combine mask with grayscale image. Do we need this?
-        cv::Mat grayscaleImage, grayscaleMask;
-        cv::cvtColor(undistortedImage, grayscaleImage, cv::COLOR_BGR2GRAY);
-
-        grayscaleImage = ~grayscaleImage;
-
-        bitwise_and(grayscaleImage, combinedThreshold, grayscaleMask);
-
-        // Step 3: Apply Gaussian filter to smooth thresholded image
-        cv::GaussianBlur(combinedThreshold, gaussianBlurImage, cv::Size(5, 5), 0, 0);
-
-        // Step 4: Extract the region of interest
-        extractROI(gaussianBlurImage, ROIImage);
-
-        // Step 5: Transform perspective
-        cv::Mat transformMatrix, invtransformMatrix;
-        transformPerspective(ROIImage, warpedImage, transformMatrix, invtransformMatrix);
-
-
-        // Step 6: Get the lane parameters
-        // curveFlag = 1: Straight Line
-        // curveFlag = 2: 2nd order polynomial fit
-        extractLanes(warpedImage, laneColor, leftLane, rightLane, 2);
-
-        // Adding inverse transform to show in final video
-        cv::Mat unwarpedOutput;
-        cv::warpPerspective(laneColor, unwarpedOutput, invtransformMatrix, cv::Size(1280, 720));
-
-        // Step 7: Display the output
-        displayOutput(laneColor, frame, finalOutput, leftLane, rightLane, invtransformMatrix);
-
-        // Display routine
-        imshow("Lane Detection", finalOutput);
-
-        frameNumber++;
-        if (cv::waitKey(30) >= 0)
-            break;
+LaneDetectionInfo LaneDetectionModule::detectLane(cv::Mat frame) {
+    if (frame.empty()) {
+        return {
+            .frame = {},
+            .direction = "unknown",
+            .steer_angle = 360.0
+        };
     }
 
-    return true;
+    Lane leftLane(2, "red", 10), rightLane(2, "green", 10);
+
+    cv::Mat whiteThreshold, yellowThreshold, combinedThreshold,
+        distColor, gaussianBlurImage, ROIImage, warpedImage, undistortedImage,
+        laneColor, finalOutput;
+
+    // Step 1: Undistort the input image given camera params
+    undistortImage(frame, undistortedImage);
+
+    // Step 2: Get white lane
+    thresholdImageW(undistortedImage, whiteThreshold);
+
+    // Step 2: Get Yellow lane
+    thresholdImageY(undistortedImage, yellowThreshold);
+
+    // Step 2: Combine both the masks
+    bitwise_or(whiteThreshold, yellowThreshold, combinedThreshold);
+
+    combinedThreshold = ~combinedThreshold;
+
+    // Combine mask with grayscale image. Do we need this?
+    cv::Mat grayscaleImage, grayscaleMask;
+    cv::cvtColor(undistortedImage, grayscaleImage, cv::COLOR_BGR2GRAY);
+
+    grayscaleImage = ~grayscaleImage;
+
+    bitwise_and(grayscaleImage, combinedThreshold, grayscaleMask);
+
+    // Step 3: Apply Gaussian filter to smooth thresholded image
+    cv::GaussianBlur(combinedThreshold, gaussianBlurImage, cv::Size(5, 5), 0, 0);
+
+    // Step 4: Extract the region of interest
+    extractROI(gaussianBlurImage, ROIImage);
+
+    // Step 5: Transform perspective
+    cv::Mat transformMatrix, invtransformMatrix;
+    transformPerspective(ROIImage, warpedImage, transformMatrix, invtransformMatrix);
+
+    // Step 6: Get the lane parameters
+    // curveFlag = 1: Straight Line
+    // curveFlag = 2: 2nd order polynomial fit
+    extractLanes(warpedImage, laneColor, leftLane, rightLane, 2);
+
+    // Adding inverse transform to show in final video
+    cv::Mat unwarpedOutput;
+    cv::warpPerspective(laneColor, unwarpedOutput, invtransformMatrix, cv::Size(1280, 720));
+
+    // Step 7: Display the output
+    return displayOutput(laneColor, frame, finalOutput, leftLane, rightLane, invtransformMatrix);
 }
 
 cv::Scalar LaneDetectionModule::getYellowMax() {
-    return yellowMax;
+    return yellowMax_;
 }
 
 cv::Scalar LaneDetectionModule::getYellowMin() {
-    return yellowMin;
+    return yellowMin_;
 }
 
 void LaneDetectionModule::setYellowMax(cv::Scalar value) {
-    yellowMax = value;
+    yellowMax_ = value;
 }
 
 void LaneDetectionModule::setYellowMin(cv::Scalar value) {
-    yellowMin = value;
+    yellowMin_ = value;
 }
 
 void LaneDetectionModule::setGrayScaleMax(int value) {
-    grayscaleMax = value;
+    grayscaleMax_ = value;
 }
 
 void LaneDetectionModule::setGrayScaleMin(int value) {
-    grayscaleMin = value;
+    grayscaleMin_ = value;
 }
 
 int LaneDetectionModule::getGrayScaleMin() {
-    return grayscaleMin;
+    return grayscaleMin_;
 }
 
 int LaneDetectionModule::getGrayScaleMax() {
-    return grayscaleMax;
+    return grayscaleMax_;
 }
