@@ -9,14 +9,21 @@ A very basic self driving arduino car
 - motion plaing
 - manual control
 
-# Build
-1. Prepare your ros2 environment
+# Prepare your ros2 environment
+1. According to [official documentation](https://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html#source-the-setup-files) for every new shell you will need to run this command to have access to the ROS 2 commands:
 ```
 source /opt/ros/jazzy/setup.bash
+```
+2. Alternative way is to [add sourcing to your shell startup script](https://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html#source-the-setup-files)
+```
+echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
+```
+3. But for build rule and especially for install directory you have mannualy set the environment:
+```
 source install/local_setup.bash
 ```
 
-2. Build
+# Build
 ```
 make all
 ```
