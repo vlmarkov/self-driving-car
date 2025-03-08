@@ -3,85 +3,85 @@
 #include <gtest/gtest.h>
 
 TEST(GetSetTest, GetGrayScaleMin) {
-    LaneDetectionModule laneModule;
-    int lowTheshold = laneModule.getGrayScaleMin();
+    LaneDetectionModule ldm({});
+    int lowTheshold = ldm.getGrayScaleMin();
 
     ASSERT_EQ(lowTheshold, 200);
 }
 
 TEST(GetSetTest, GetGrayScaleMax) {
-    LaneDetectionModule laneModule;
-    int highTheshold = laneModule.getGrayScaleMax();
+    LaneDetectionModule ldm({});
+    int highTheshold = ldm.getGrayScaleMax();
 
     ASSERT_EQ(highTheshold, 255);
 }
 
 TEST(GetSetTest, GetYellowMin) {
-    LaneDetectionModule laneModule;
-    cv::Scalar lowTheshold = laneModule.getYellowMin();
+    LaneDetectionModule ldm({});
+    cv::Scalar lowTheshold = ldm.getYellowMin();
 
     ASSERT_EQ(lowTheshold, cv::Scalar(20, 100, 100));
 }
 
 TEST(GetSetTest, GetYellowMax) {
-    LaneDetectionModule laneModule;
-    cv::Scalar highTheshold = laneModule.getYellowMax();
+    LaneDetectionModule ldm({});
+    cv::Scalar highTheshold = ldm.getYellowMax();
 
     ASSERT_EQ(highTheshold, cv::Scalar(30, 255, 255));
 }
 
 TEST(GetSetTest, SetGrayScaleMin) {
-    LaneDetectionModule laneModule;
-    laneModule.setGrayScaleMin(150);
-    int lowTheshold = laneModule.getGrayScaleMin();
+    LaneDetectionModule ldm({});
+    ldm.setGrayScaleMin(150);
+    int lowTheshold = ldm.getGrayScaleMin();
 
     ASSERT_EQ(lowTheshold, 150);
 }
 
 TEST(GetSetTest, SetGrayScaleMax) {
-    LaneDetectionModule laneModule;
-    laneModule.setGrayScaleMax(210);
-    int highTheshold = laneModule.getGrayScaleMax();
+    LaneDetectionModule ldm({});
+    ldm.setGrayScaleMax(210);
+    int highTheshold = ldm.getGrayScaleMax();
 
     ASSERT_EQ(highTheshold, 210);
 }
 
 TEST(GetSetTest, SetYellowMin) {
-    LaneDetectionModule laneModule;
-    laneModule.setYellowMin(cv::Scalar(50, 50, 50));
-    cv::Scalar lowTheshold = laneModule.getYellowMin();
+    LaneDetectionModule ldm({});
+    ldm.setYellowMin(cv::Scalar(50, 50, 50));
+    cv::Scalar lowTheshold = ldm.getYellowMin();
 
     ASSERT_EQ(lowTheshold, cv::Scalar(50, 50, 50));
 }
 
 TEST(GetSetTest, SetYellowMax) {
-    LaneDetectionModule laneModule;
-    laneModule.setYellowMax(cv::Scalar(150, 150, 150));
-    cv::Scalar highTheshold = laneModule.getYellowMax();
+    LaneDetectionModule ldm({});
+    ldm.setYellowMax(cv::Scalar(150, 150, 150));
+    cv::Scalar highTheshold = ldm.getYellowMax();
 
    ASSERT_EQ(highTheshold, cv::Scalar(150, 150, 150));
 }
 
 TEST(FunctionalTest, TestImageStraight) {
-    LaneDetectionModule laneModule;
+    LaneDetectionModule ldm({});
     auto frame = cv::imread("../../ros2-modules/line-detection/tests/images/straight.jpg", cv::IMREAD_UNCHANGED);
-    auto status = laneModule.detectLane(std::move(frame));
+    auto status = ldm.detectLane(std::move(frame));
 
     ASSERT_EQ(status.direction, "Head straight");
 }
 
 TEST(FunctionalTest, TestImageLeft) {
-    LaneDetectionModule laneModule;
+    LaneDetectionModule ldm({});
     auto frame = cv::imread("../../ros2-modules/line-detection/tests/images/left.jpg", cv::IMREAD_UNCHANGED);
-    auto status = laneModule.detectLane(std::move(frame));
+    auto status = ldm.detectLane(std::move(frame));
 
     ASSERT_EQ(status.direction, "Turn left");
 }
 
 TEST(FunctionalTest, TestImageRight) {
-    LaneDetectionModule laneModule;
+    LaneDetectionModule ldm({});
     auto frame = cv::imread("../../ros2-modules/line-detection/tests/images/right.jpg", cv::IMREAD_UNCHANGED);
-    auto status = laneModule.detectLane(std::move(frame));
+    auto status = ldm.detectLane(std::move(frame));
 
     ASSERT_EQ(status.direction, "Turn right");
 }

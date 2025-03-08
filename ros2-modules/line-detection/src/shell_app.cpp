@@ -6,7 +6,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    LaneDetectionModule lm;
+    LaneDetectionModule lm({});
     auto lane_detection_info = lm.detectLane(std::move(frame));
 
     cv::imshow("Lane Detection", lane_detection_info.frame);

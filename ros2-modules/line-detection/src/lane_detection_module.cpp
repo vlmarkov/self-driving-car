@@ -1,13 +1,14 @@
 #include <line-detection/lane_detection_module.h>
 
-LaneDetectionModule::LaneDetectionModule() {
-    yellowMin_ = cv::Scalar(20, 100, 100);  // yellow lane min threshold
-    yellowMax_ = cv::Scalar(30, 255, 255);  // yellow lane max threshold
-    grayscaleMin_ = 200;  // white lane min threshold
-    grayscaleMax_ = 255;  // white lane max threshold
+LaneDetectionModule::LaneDetectionModule(LaneDetectionParams params) 
+    : yellowMin_(params.yellow_min) 
+    , yellowMax_(params.yellow_max)
+    , grayscaleMin_(params.grayscale_min)
+    , grayscaleMax_(params.grayscale_max)
+    , roi_upper_left_corner_(params.roi_upper_left_corner)
+    , roi_upper_right_corner_(params.roi_upper_right_corner)
+{
 }
-
-LaneDetectionModule::~LaneDetectionModule() {}
 
 void LaneDetectionModule::undistortImage(const cv::Mat& src, cv::Mat& dst) {
     cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << 1154.22732, 0.0, 671.627794, 0.0, 1148.18221, 386.046312, 0.0, 0.0, 1.0);
@@ -38,12 +39,12 @@ void LaneDetectionModule::extractROI(const cv::Mat& src, cv::Mat& dst) {
     //  mask matrix initialized as zero Matrix of Height and Width of frame matrix.
     cv::Mat mask = cv::Mat::zeros(height, width, CV_8U);
     // Make corners points for the mask.
-    // Calibrateted for sample black and white
+    // Calibrateted for black and white sample
     cv::Point pts[4] = {
         cv::Point2f(width, height), // b r c
         cv::Point2f(0, height),     // b l c
-        cv::Point2f(300, 600),      // u l c
-        cv::Point2f(1000, 600)      // u r c
+        roi_upper_left_corner_,     // u l c
+        roi_upper_right_corner_     // u r c
     };
 
     // Create a polygon
@@ -54,22 +55,22 @@ void LaneDetectionModule::extractROI(const cv::Mat& src, cv::Mat& dst) {
 }
 
 void LaneDetectionModule::transformPerspective(const cv::Mat& src, cv::Mat& dst, cv::Mat& Tm, cv::Mat& invTm) {
-    int w = src.cols;
-    int h = src.rows;
+    const auto w = src.cols;
+    const auto h = src.rows;
 
     dst = src.clone();
 
     // Make corners for the transform
     // br, bl, tl, tr -> order
-    cv::Point2f start[4] = {
+    const cv::Point2f start[4] = {
         cv::Point2f(w, h),      // b r c
         cv::Point2f(0, h),      // b l c
-        cv::Point2f(300, 600),  // 
-        cv::Point2f(1000, 600)
+        roi_upper_left_corner_, // u l c 
+        roi_upper_right_corner_ // u r c
     };
 
     // Must be the same as original
-    cv::Point2f end[4] = {
+    const cv::Point2f end[4] = {
         cv::Point2f(w, h),
         cv::Point2f(0, h),
         cv::Point2f(0, 0),

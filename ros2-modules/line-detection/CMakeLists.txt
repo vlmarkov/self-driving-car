@@ -57,22 +57,22 @@ if(BUILD_TESTING)
   )
   target_link_libraries(${PROJECT_NAME}_lane_tests ${OpenCV_LIBS})
 
-  ament_add_gtest(${PROJECT_NAME}_line_detection_module_tests tests/line_detection_module_tests.cpp
-                                                              src/line_detection_module.cpp
+  ament_add_gtest(${PROJECT_NAME}_lane_detection_module_tests tests/lane_detection_module_tests.cpp
+                                                              src/lane_detection_module.cpp
                                                               src/lane.cpp)
-  target_include_directories(${PROJECT_NAME}_line_detection_module_tests PUBLIC
+  target_include_directories(${PROJECT_NAME}_lane_detection_module_tests PUBLIC
                              $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                              $<INSTALL_INTERFACE:include>
   )
-  target_link_libraries(${PROJECT_NAME}_line_detection_module_tests ${OpenCV_LIBS})
+  target_link_libraries(${PROJECT_NAME}_lane_detection_module_tests ${OpenCV_LIBS})
 
 endif()
 
 ament_package()
 
-add_executable(line_detection_shell_app
+add_executable(lane_detection_shell_app
                src/shell_app.cpp
                src/lane.cpp
-               src/line_detection_module.cpp
+               src/lane_detection_module.cpp
 )
-TARGET_LINK_LIBRARIES(line_detection_shell_app ${OpenCV_LIBS})
+TARGET_LINK_LIBRARIES(lane_detection_shell_app ${OpenCV_LIBS})
