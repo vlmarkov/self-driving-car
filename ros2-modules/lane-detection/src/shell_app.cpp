@@ -1,4 +1,4 @@
-#include <line-detection/lane_detection_module.h>
+#include <lane-detection/lane_detection_module.h>
 
 int main(int argc, char* argv[]) {
     auto frame = cv::imread(argv[1], cv::IMREAD_UNCHANGED);

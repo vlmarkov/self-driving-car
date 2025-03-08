@@ -14,7 +14,7 @@ find_package(common REQUIRED)
 find_package(manual-control REQUIRED)
 find_package(path-planning REQUIRED)
 find_package(obstacle-avoidance REQUIRED)
-find_package(line-detection REQUIRED)
+find_package(lane-detection REQUIRED)
 find_package(motion-calibration REQUIRED)
 
 include_directories(include)
@@ -29,7 +29,7 @@ ament_target_dependencies(main_pipeline
                           manual-control
                           path-planning
                           obstacle-avoidance
-                          line-detection
+                          lane-detection
                           motion-calibration)
 
 install(TARGETS

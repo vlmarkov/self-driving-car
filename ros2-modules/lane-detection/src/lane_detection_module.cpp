@@ -1,4 +1,4 @@
-#include <line-detection/lane_detection_module.h>
+#include <lane-detection/lane_detection_module.h>
 
 LaneDetectionModule::LaneDetectionModule(LaneDetectionParams params) 
     : yellowMin_(params.yellow_min) 

@@ -1,4 +1,4 @@
-all: interfaces common line-detection manual-control obstacle-avoidance path-planning motion-calibration main-pipeline
+all: interfaces common lane-detection manual-control obstacle-avoidance path-planning motion-calibration main-pipeline
 
 interfaces:
 	colcon build --packages-select interfaces
@@ -9,8 +9,8 @@ common:
 main-pipeline:
 	colcon build --packages-select main-pipeline
 
-line-detection:
-	colcon build --packages-select line-detection
+lane-detection:
+	colcon build --packages-select lane-detection
 
 manual-control:
 	colcon build --packages-select manual-control

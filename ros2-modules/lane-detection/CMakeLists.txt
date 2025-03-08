@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(line-detection)
+project(lane-detection)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -std=c++20)
@@ -15,26 +15,26 @@ find_package(OpenCV REQUIRED )
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(include)
 
-add_executable(line_detection src/main.cpp
-                              src/line_detection.cpp
+add_executable(${PROJECT_NAME} src/main.cpp
+                               src/lane_detection.cpp
 )
-ament_target_dependencies(line_detection common)
+ament_target_dependencies(${PROJECT_NAME} common)
 
 ament_export_include_directories(include)
 
 install(
-  DIRECTORY include/line-detection
+  DIRECTORY include/${PROJECT_NAME}
   DESTINATION include
 )
 
 install(
-  TARGETS line_detection
-  EXPORT line_detection
+  TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}
   INCLUDES DESTINATION include
 )
 
 install(TARGETS
-        line_detection
+        ${PROJECT_NAME}
         DESTINATION
         lib/${PROJECT_NAME}
 )
@@ -57,22 +57,22 @@ if(BUILD_TESTING)
   )
   target_link_libraries(${PROJECT_NAME}_lane_tests ${OpenCV_LIBS})
 
-  ament_add_gtest(${PROJECT_NAME}_lane_detection_module_tests tests/lane_detection_module_tests.cpp
-                                                              src/lane_detection_module.cpp
-                                                              src/lane.cpp)
-  target_include_directories(${PROJECT_NAME}_lane_detection_module_tests PUBLIC
+  ament_add_gtest(${PROJECT_NAME}_module_tests tests/lane_detection_module_tests.cpp
+                                                     src/lane_detection_module.cpp
+                                                     src/lane.cpp)
+  target_include_directories(${PROJECT_NAME}_module_tests PUBLIC
                              $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                              $<INSTALL_INTERFACE:include>
   )
-  target_link_libraries(${PROJECT_NAME}_lane_detection_module_tests ${OpenCV_LIBS})
+  target_link_libraries(${PROJECT_NAME}_module_tests ${OpenCV_LIBS})
 
 endif()
 
 ament_package()
 
-add_executable(lane_detection_shell_app
+add_executable(${PROJECT_NAME}_shell_app
                src/shell_app.cpp
                src/lane.cpp
                src/lane_detection_module.cpp
 )
-TARGET_LINK_LIBRARIES(lane_detection_shell_app ${OpenCV_LIBS})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}_shell_app ${OpenCV_LIBS})
