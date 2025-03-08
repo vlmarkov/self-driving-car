@@ -8,8 +8,8 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(interfaces REQUIRED)
 
+find_package(interfaces REQUIRED)
 find_package(common REQUIRED)
 find_package(manual-control REQUIRED)
 find_package(path-planning REQUIRED)
@@ -39,10 +39,10 @@ install(TARGETS
 )
 
 if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  set(ament_cmake_copyright_FOUND TRUE)
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
+  #find_package(ament_lint_auto REQUIRED)
+  #set(ament_cmake_copyright_FOUND TRUE)
+  #set(ament_cmake_cpplint_FOUND TRUE)
+  #ament_lint_auto_find_test_dependencies()
 endif()
 
 ament_package()

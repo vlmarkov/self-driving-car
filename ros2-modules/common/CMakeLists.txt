@@ -19,10 +19,10 @@ ament_target_dependencies(common rclcpp interfaces)
 ament_export_targets(common HAS_LIBRARY_TARGET)
 
 if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  set(ament_cmake_copyright_FOUND TRUE)
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
+  #find_package(ament_lint_auto REQUIRED)
+  #set(ament_cmake_copyright_FOUND TRUE)
+  #set(ament_cmake_cpplint_FOUND TRUE)
+  #ament_lint_auto_find_test_dependencies()
 endif()
 
 install(

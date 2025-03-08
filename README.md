@@ -13,7 +13,7 @@ A very basic self driving arduino car
 1. Prepare your ros2 environment
 ```
 source /opt/ros/jazzy/setup.bash
-. install/setup.bash
+source install/local_setup.bash
 ```
 
 2. Build
@@ -22,12 +22,7 @@ make all
 ```
 
 # Run
-1. Prepare to run
-```
-source install/local_setup.bash
-```
-
-2. Choose module to run
+1. Choose module to run
 ```
 ros2 run main-pipeline main_pipeline
 ros2 run manual-control manual_control
