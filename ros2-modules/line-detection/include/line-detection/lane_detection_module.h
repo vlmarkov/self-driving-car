@@ -15,6 +15,15 @@
 
 #include "lane.h"
 
+struct LaneDetectionParams{
+    cv::Scalar yellow_min{20, 100, 100};           // A yellow lane min threshold
+    cv::Scalar yellow_max{30, 255, 255};           // A yellow lane max threshold
+    int grayscale_min{200};                        // A white lane min threshold
+    int grayscale_max{255};                        // A white lane max threshold
+    cv::Point2f roi_upper_left_corner{300, 600};   // A camera/frame calibration point
+    cv::Point2f roi_upper_right_corner{1000, 600}; // A camera/frame calibration point
+};
+
 struct LaneDetectionInfo {
     cv::Mat frame;
     std::string direction;
@@ -23,8 +32,8 @@ struct LaneDetectionInfo {
 
 class LaneDetectionModule {
 public:
-    LaneDetectionModule();
-    ~LaneDetectionModule();
+    LaneDetectionModule(LaneDetectionParams params);
+    ~LaneDetectionModule() = default;
     
     void undistortImage(const cv::Mat& src, cv::Mat& dst);
     void thresholdImageY(const cv::Mat& src, cv::Mat& dst);
@@ -48,8 +57,10 @@ public:
     int getGrayScaleMax();
 
 private:
-    cv::Scalar yellowMin_;  // max possible RGB values of yellow
-    cv::Scalar yellowMax_;  // min possible RGB values of yellow
-    int grayscaleMin_;      // min possible grayscale value for white in our video
-    int grayscaleMax_;      // max possible grayscale value for white in our video
+    cv::Scalar yellowMin_;               // Min possible RGB values of yellow
+    cv::Scalar yellowMax_;               // Max possible RGB values of yellow
+    int grayscaleMin_;                   // Min possible grayscale value for white
+    int grayscaleMax_;                   // Max possible grayscale value for white
+    cv::Point2f roi_upper_left_corner_;  // A camera/frame calibration point
+    cv::Point2f roi_upper_right_corner_; // A camera/frame calibration point
 };
