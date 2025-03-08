@@ -16,11 +16,15 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(include)
 
 add_executable(${PROJECT_NAME} src/main.cpp
+                               src/lane.cpp
                                src/lane_detection.cpp
+                               src/lane_detection_module.cpp
 )
 ament_target_dependencies(${PROJECT_NAME} common)
 
 ament_export_include_directories(include)
+
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 
 install(
   DIRECTORY include/${PROJECT_NAME}

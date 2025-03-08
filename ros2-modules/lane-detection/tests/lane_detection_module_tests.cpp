@@ -65,7 +65,7 @@ TEST(GetSetTest, SetYellowMax) {
 TEST(FunctionalTest, TestImageStraight) {
     LaneDetectionModule ldm({});
     auto frame = cv::imread("../../ros2-modules/lane-detection/tests/images/straight.jpg", cv::IMREAD_UNCHANGED);
-    auto status = ldm.detectLane(std::move(frame));
+    auto status = ldm.detect_lane(std::move(frame));
 
     ASSERT_EQ(status.direction, "Head straight");
 }
@@ -73,7 +73,7 @@ TEST(FunctionalTest, TestImageStraight) {
 TEST(FunctionalTest, TestImageLeft) {
     LaneDetectionModule ldm({});
     auto frame = cv::imread("../../ros2-modules/lane-detection/tests/images/left.jpg", cv::IMREAD_UNCHANGED);
-    auto status = ldm.detectLane(std::move(frame));
+    auto status = ldm.detect_lane(std::move(frame));
 
     ASSERT_EQ(status.direction, "Turn left");
 }
@@ -81,7 +81,7 @@ TEST(FunctionalTest, TestImageLeft) {
 TEST(FunctionalTest, TestImageRight) {
     LaneDetectionModule ldm({});
     auto frame = cv::imread("../../ros2-modules/lane-detection/tests/images/right.jpg", cv::IMREAD_UNCHANGED);
-    auto status = ldm.detectLane(std::move(frame));
+    auto status = ldm.detect_lane(std::move(frame));
 
     ASSERT_EQ(status.direction, "Turn right");
 }

@@ -15,7 +15,7 @@
 
 #include "lane.h"
 
-struct LaneDetectionParams{
+struct LaneDetectionCfg{
     cv::Scalar yellow_min{20, 100, 100};           // A yellow lane min threshold
     cv::Scalar yellow_max{30, 255, 255};           // A yellow lane max threshold
     int grayscale_min{200};                        // A white lane min threshold
@@ -24,7 +24,7 @@ struct LaneDetectionParams{
     cv::Point2f roi_upper_right_corner{1000, 600}; // A camera/frame calibration point
 };
 
-struct LaneDetectionInfo {
+struct LaneDetectionStatus {
     cv::Mat frame;
     std::string direction;
     double steer_angle;
@@ -32,7 +32,7 @@ struct LaneDetectionInfo {
 
 class LaneDetectionModule {
 public:
-    LaneDetectionModule(LaneDetectionParams params);
+    LaneDetectionModule(LaneDetectionCfg cfg);
     ~LaneDetectionModule() = default;
     
     void undistortImage(const cv::Mat& src, cv::Mat& dst);
@@ -44,8 +44,8 @@ public:
     void fitPoly(const std::vector<cv::Point>& src, cv::Mat& dst, int order);
     double getDriveHeading(Lane& lane1, Lane& lane2, std::string& direction);
 
-    LaneDetectionInfo displayOutput(const cv::Mat& src, cv::Mat& src2, cv::Mat& dst, Lane& lane1, Lane& lane2, cv::Mat inv);
-    LaneDetectionInfo detectLane(cv::Mat frame);
+    LaneDetectionStatus displayOutput(const cv::Mat& src, cv::Mat& src2, cv::Mat& dst, Lane& lane1, Lane& lane2, cv::Mat inv);
+    LaneDetectionStatus detect_lane(cv::Mat frame);
 
     cv::Scalar getYellowMax();
     cv::Scalar getYellowMin();

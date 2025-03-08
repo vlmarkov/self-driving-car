@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <mutex>
 
 #include "rclcpp/rclcpp.hpp"
 #include "interfaces/msg/motion_vector.hpp"
@@ -19,7 +20,7 @@ public:
     virtual ~IPubSubNode() = default;
 
     virtual void set_publish_msg(interfaces::msg::MotionVector msg) = 0;
-    virtual interfaces::msg::MotionVector get_subscription_msg() const = 0;
+    virtual interfaces::msg::MotionVector get_subscription_msg() = 0;
 };
 
 class BasePubSubNode : public IPubSubNode, public rclcpp::Node
@@ -29,7 +30,7 @@ public:
     ~BasePubSubNode() = default;
 
     void set_publish_msg(interfaces::msg::MotionVector msg) final;
-    interfaces::msg::MotionVector get_subscription_msg() const final;
+    interfaces::msg::MotionVector get_subscription_msg() final;
 
 private:
     const std::string name_;
@@ -37,4 +38,10 @@ private:
 
     rclcpp::Publisher<interfaces::msg::MotionVector>::SharedPtr publisher_;
     rclcpp::Subscription<interfaces::msg::MotionVector>::SharedPtr subscription_;
+
+    interfaces::msg::MotionVector publish_msg_;
+    interfaces::msg::MotionVector subscription_msg_;
+
+    std::mutex publish_msg_mutex_;
+    std::mutex subscription_msg_mutex_;
 };

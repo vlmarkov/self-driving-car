@@ -1,13 +1,14 @@
 #include <lane-detection/lane_detection_module.h>
 
-LaneDetectionModule::LaneDetectionModule(LaneDetectionParams params) 
-    : yellowMin_(params.yellow_min) 
-    , yellowMax_(params.yellow_max)
-    , grayscaleMin_(params.grayscale_min)
-    , grayscaleMax_(params.grayscale_max)
-    , roi_upper_left_corner_(params.roi_upper_left_corner)
-    , roi_upper_right_corner_(params.roi_upper_right_corner)
+LaneDetectionModule::LaneDetectionModule(LaneDetectionCfg cfg)
+    : yellowMin_(cfg.yellow_min)
+    , yellowMax_(cfg.yellow_max)
+    , grayscaleMin_(cfg.grayscale_min)
+    , grayscaleMax_(cfg.grayscale_max)
+    , roi_upper_left_corner_(cfg.roi_upper_left_corner)
+    , roi_upper_right_corner_(cfg.roi_upper_right_corner)
 {
+    // Nothing so far
 }
 
 void LaneDetectionModule::undistortImage(const cv::Mat& src, cv::Mat& dst) {
@@ -322,7 +323,7 @@ double LaneDetectionModule::getDriveHeading(Lane& lane1, Lane& lane2, std::strin
   return modifiedSlope;
 }
 
-LaneDetectionInfo LaneDetectionModule::displayOutput(const cv::Mat& src, cv::Mat& src2, cv::Mat& dst, Lane& lane1, Lane& lane2, cv::Mat inv) {
+LaneDetectionStatus LaneDetectionModule::displayOutput(const cv::Mat& src, cv::Mat& src2, cv::Mat& dst, Lane& lane1, Lane& lane2, cv::Mat inv) {
     std::vector<int> yaxis = { 15, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 715 };
 
     cv::Mat dispOutput;
@@ -418,7 +419,7 @@ LaneDetectionInfo LaneDetectionModule::displayOutput(const cv::Mat& src, cv::Mat
     };
 }
 
-LaneDetectionInfo LaneDetectionModule::detectLane(cv::Mat frame) {
+LaneDetectionStatus LaneDetectionModule::detect_lane(cv::Mat frame) {
     if (frame.empty()) {
         return {
             .frame = {},

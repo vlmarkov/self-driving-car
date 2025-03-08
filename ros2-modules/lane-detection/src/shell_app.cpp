@@ -7,11 +7,11 @@ int main(int argc, char* argv[]) {
     }
 
     LaneDetectionModule lm({});
-    auto lane_detection_info = lm.detectLane(std::move(frame));
+    auto status = lm.detect_lane(std::move(frame));
 
-    cv::imshow("Lane Detection", lane_detection_info.frame);
-    std::cout << lane_detection_info.direction << std::endl;
-    std::cout << lane_detection_info.steer_angle << std::endl;
+    cv::imshow("Lane Detection Status", status.frame);
+    std::cout << status.direction << std::endl;
+    std::cout << status.steer_angle << std::endl;
 
     if (cv::waitKey(3000) >= 0) {
         return 0;
