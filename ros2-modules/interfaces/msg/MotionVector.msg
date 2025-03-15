@@ -1,2 +1,3 @@
-float32 acseleration
+bool is_auto_pilot_on
+float32 acceleration
 float32 steering
