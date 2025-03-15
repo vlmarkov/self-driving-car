@@ -8,7 +8,7 @@ namespace
 
 constexpr auto TEST_IP = "localhost";
 constexpr auto TEST_PORT = 8080;
-constexpr Command TEST_CMD{.is_auto_pilot_on = true, .acceleration = 50.0, .steering = 60.0};   
+constexpr Command TEST_CMD{.is_auto_pilot_on = true, .acceleration = 50.0, .steering = 60.0};
 
 } // namespace
 
@@ -26,7 +26,7 @@ TEST(TcpClentTest, ExpectCreation) {
     EXPECT_CALL(*(mock_socket.get()), open(TEST_IP, TEST_PORT)).Times(1);
     EXPECT_CALL(*(mock_socket.get()), close()).Times(1);
 
-    TcpClient tcp_client(std::move(mock_socket), TEST_IP, TEST_PORT);   
+    TcpClient tcp_client(std::move(mock_socket), TEST_IP, TEST_PORT);
 }
 
 TEST(TcpClentTest, ExpectSendCmd) {
@@ -34,7 +34,7 @@ TEST(TcpClentTest, ExpectSendCmd) {
 
     EXPECT_CALL(*(mock_socket.get()), send(TEST_CMD)).Times(1);
 
-    TcpClient tcp_client(std::move(mock_socket), TEST_IP, TEST_PORT);   
+    TcpClient tcp_client(std::move(mock_socket), TEST_IP, TEST_PORT);
 
     tcp_client.send_command(TEST_CMD);    
 }

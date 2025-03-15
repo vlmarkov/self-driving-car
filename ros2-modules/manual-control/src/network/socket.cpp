@@ -25,13 +25,13 @@ int close_socket(int fd) {
 int open_client_socket(std::string ip_addr, size_t port) {
     struct hostent* host = gethostbyname(ip_addr.c_str());
     sockaddr_in sendSockAddr;
-    bzero((char*)&sendSockAddr, sizeof(sendSockAddr));
+    ::bzero((char*)&sendSockAddr, sizeof(sendSockAddr));
     sendSockAddr.sin_family = AF_INET;
     sendSockAddr.sin_addr.s_addr = inet_addr(inet_ntoa(*(struct in_addr*)*host->h_addr_list));
     sendSockAddr.sin_port = htons(port);
 
     int fd = socket(AF_INET, SOCK_STREAM, 0);
-    if(fd < 0) {
+    if (fd < 0) {
         std::cerr << "Error establishing the server socket" << std::endl;
         return -1;
     }
@@ -47,13 +47,13 @@ int open_client_socket(std::string ip_addr, size_t port) {
 
 int open_server_socket(std::string ip_addr, size_t port) {
     sockaddr_in servAddr;
-    bzero((char*)&servAddr, sizeof(servAddr));
+    ::bzero((char*)&servAddr, sizeof(servAddr));
     servAddr.sin_family = AF_INET;
     servAddr.sin_addr.s_addr = inet_addr(ip_addr.c_str());
     servAddr.sin_port = htons(port);
 
     int fd = socket(AF_INET, SOCK_STREAM, 0);
-    if(fd < 0) {
+    if (fd < 0) {
         std::cerr << "Error establishing the server socket" << std::endl;
         return -1;
     }
@@ -65,7 +65,7 @@ int open_server_socket(std::string ip_addr, size_t port) {
         return -1;
     }
 
-    if(bind(fd, (struct sockaddr*) &servAddr, sizeof(servAddr)) < 0) {
+    if (bind(fd, (struct sockaddr*) &servAddr, sizeof(servAddr)) < 0) {
         std::cerr << "Error binding socket to address" << std::endl;
         close_socket(fd);
         return -1;
@@ -94,7 +94,7 @@ int accept_new_connection(int sock_fd) {
     sockaddr_in newSockAddr;
     socklen_t newSockAddrSize = sizeof(newSockAddr);
     int new_fd = ::accept(sock_fd, (sockaddr *)&newSockAddr, &newSockAddrSize);
-    if(new_fd < 0) {
+    if (new_fd < 0) {
         std::cerr << "Error accepting request from client!" << std::endl;
         return -1;
     }
