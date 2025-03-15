@@ -39,10 +39,12 @@ void MainPipeline::add_module(const std::string& name) {
 void MainPipeline::process_callback() {
     for (const auto& s: module_subscriptions_) {
         RCLCPP_INFO(this->get_logger(),
-            "[%s] %f:%f/%f:%f", s->name_.c_str(),
-            s->from_prev_module_.acseleration,
+            "[%s] %d %f:%f/%d %f:%f", s->name_.c_str(),
+            s->from_prev_module_.is_auto_pilot_on,
+            s->from_prev_module_.acceleration,
             s->from_prev_module_.steering,
-            s->to_next_module_.acseleration,
+            s->to_next_module_.is_auto_pilot_on,
+            s->to_next_module_.acceleration,
             s->to_next_module_.steering
         );
     }

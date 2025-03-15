@@ -19,17 +19,21 @@ BasePubSubNode::BasePubSubNode(const PubSubCfg& cfg)
             mv = publish_msg_;
         }
 
-        RCLCPP_INFO(this->get_logger(), "I Publishing: acseleration: %f, steering: %f", mv.acseleration, mv.steering);
+        RCLCPP_INFO(this->get_logger(), "I Publishing: auto-pilot: %d, acceleration: %f, steering: %f",
+            mv.is_auto_pilot_on, mv.acceleration, mv.steering);
+
         this->publisher_->publish(mv);
     };
     timer_ = this->create_wall_timer(cfg.duration, pub_cb);
 
     auto sub_cb = [this](interfaces::msg::MotionVector::UniquePtr mv) -> void {
-        RCLCPP_INFO(this->get_logger(), "I heard: acseleration: %f, steering: %f", mv->acseleration, mv->steering);
+        RCLCPP_INFO(this->get_logger(), "I heard: auto-pilot: %d, acceleration: %f, steering: %f", 
+            mv->is_auto_pilot_on, mv->acceleration, mv->steering);
 
         {
             std::lock_guard<std::mutex> lock(subscription_msg_mutex_);
-            subscription_msg_.acseleration = mv->steering;
+            subscription_msg_.is_auto_pilot_on = mv->is_auto_pilot_on;
+            subscription_msg_.acceleration = mv->acceleration;
             subscription_msg_.steering = mv->steering;
         }
     };
