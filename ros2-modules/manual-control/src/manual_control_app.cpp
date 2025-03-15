@@ -26,16 +26,16 @@ int main(int argc, char * argv[])
 
         if (read_char == 'e') {
             cmd = Command();
+            cmd.is_auto_pilot_on = true;
         } else if (read_char == 'r') {
             cmd = Command();
-            cmd.is_auto_pilot_on = true;
-        } else if (read_char == 'w') {
+        } else if (!cmd.is_auto_pilot_on && read_char == 'w') {
             cmd.acceleration += 10.0;
-        } else if (read_char == 's') {
+        } else if (!cmd.is_auto_pilot_on && read_char == 's') {
             cmd.acceleration -= 10.0;
-        } else if (read_char == 'a') {
+        } else if (!cmd.is_auto_pilot_on && read_char == 'a') {
             cmd.steering -= 10.0;
-        } else if (read_char == 'd') {
+        } else if (!cmd.is_auto_pilot_on && read_char == 'd') {
             cmd.steering += 10.0;
         }
 
