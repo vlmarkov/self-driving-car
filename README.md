@@ -6,7 +6,7 @@ A very basic self driving arduino car
 - path planning
 - obstacle avoidance
 - lane detection/holding
-- motion plaing
+- motion planing
 - manual control
 
 # Prepare your ros2 environment
