@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 project(lane-detection)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic -std=c++20)
+  add_compile_options(-Wall -Wextra -Wpedantic -std=c++23)
 endif()
 
 # find dependencies
@@ -16,8 +16,8 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(include)
 
 add_executable(${PROJECT_NAME} src/main.cpp
+                               src/ros_module.cpp
                                src/lane.cpp
-                               src/lane_detection.cpp
                                src/lane_detection_module.cpp
 )
 ament_target_dependencies(${PROJECT_NAME} common)
@@ -74,9 +74,9 @@ endif()
 
 ament_package()
 
-add_executable(${PROJECT_NAME}_shell_app
-               src/shell_app.cpp
+add_executable(${PROJECT_NAME}-app
+               src/lane_detection_app.cpp
                src/lane.cpp
                src/lane_detection_module.cpp
 )
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}_shell_app ${OpenCV_LIBS})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS})

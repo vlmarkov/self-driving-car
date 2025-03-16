@@ -1,4 +1,4 @@
-#include <lane-detection/lane_detection.h>
+#include <lane-detection/ros_module.h>
 
 LaneDetection::LaneDetection(std::shared_ptr<IPubSubNode> pub_sub_node)
     : impl_(LaneDetectionCfg())

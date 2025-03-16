@@ -3,7 +3,7 @@
 #include <manual-control/ros_module.h>
 #include <path-planning/path_planning.h>
 #include <obstacle-avoidance/obstacle_avoidance.h>
-#include <lane-detection/lane_detection.h>
+#include <lane-detection/ros_module.h>
 #include <motion-calibration/ros_module.h>
 
 int main(int argc, char * argv[])

@@ -1,4 +1,4 @@
-#include <lane-detection/lane_detection.h>
+#include <lane-detection/ros_module.h>
 
 #include <thread>
 
