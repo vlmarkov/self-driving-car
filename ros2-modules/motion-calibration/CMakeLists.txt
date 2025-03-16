@@ -14,7 +14,7 @@ find_package(interfaces REQUIRED)
 include_directories(include)
 
 add_executable(motion_calibration src/main.cpp
-                                  src/motion_calibration.cpp
+                                  src/ros_module.cpp
 )
 
 ament_target_dependencies(motion_calibration common)

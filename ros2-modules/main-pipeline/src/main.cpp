@@ -4,7 +4,7 @@
 #include <path-planning/path_planning.h>
 #include <obstacle-avoidance/obstacle_avoidance.h>
 #include <lane-detection/lane_detection.h>
-#include <motion-calibration/motion_calibration.h>
+#include <motion-calibration/ros_module.h>
 
 int main(int argc, char * argv[])
 {
