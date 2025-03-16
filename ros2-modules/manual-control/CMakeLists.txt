@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 project(manual-control)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic -std=c++20)
+  add_compile_options(-Wall -Wextra -Wpedantic -std=c++23)
 endif()
 
 # find dependencies
@@ -15,7 +15,7 @@ find_package(interfaces REQUIRED)
 include_directories(include)
 
 add_executable(manual_control src/main.cpp
-                              src/manual_control.cpp
+                              src/ros_module.cpp
                               src/network/socket.cpp
                               src/network/tcp_server.cpp
 )
@@ -64,7 +64,7 @@ endif()
 
 ament_package()
 
-add_executable(${PROJECT_NAME}_app
+add_executable(${PROJECT_NAME}-app
                src/manual_control_app.cpp
                src/network/socket.cpp
                src/network/tcp_client.cpp

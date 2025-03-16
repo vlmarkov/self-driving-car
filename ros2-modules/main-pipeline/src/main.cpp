@@ -1,6 +1,6 @@
 #include <main-pipeline/main_pipeline.h>
 
-#include <manual-control/manual_control.h>
+#include <manual-control/ros_module.h>
 #include <path-planning/path_planning.h>
 #include <obstacle-avoidance/obstacle_avoidance.h>
 #include <lane-detection/lane_detection.h>

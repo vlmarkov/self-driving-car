@@ -1,6 +1,7 @@
-#include <manual-control/manual_control.h>
-#include <network/tcp_server.h>
-#include <network/socket.h>
+#include <manual-control/ros_module.h>
+
+#include <manual-control/network/tcp_server.h>
+#include <manual-control/network/socket.h>
 
 using namespace std::chrono_literals;
 

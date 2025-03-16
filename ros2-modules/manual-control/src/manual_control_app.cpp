@@ -1,5 +1,5 @@
-#include <network/tcp_client.h>
-#include <network/socket.h>
+#include <manual-control/network/tcp_client.h>
+#include <manual-control/network/socket.h>
 
 #include <iostream>
 

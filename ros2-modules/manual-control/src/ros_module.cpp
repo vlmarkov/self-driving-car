@@ -1,6 +1,6 @@
-#include <manual-control/manual_control.h>
+#include <manual-control/ros_module.h>
 
-#include <network/command.h>
+#include <manual-control/network/command.h>
 
 ManualControl::ManualControl(std::shared_ptr<IPubSubNode> pub_sub_node)
     : pub_sub_node_(pub_sub_node)
