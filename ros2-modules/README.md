@@ -9,22 +9,29 @@ ROS2 modules infrastructure to achive self-driving car functionality:
   - has the highest command priority
   - to minimize input lag between remote command and actual vehicle event
 
-## Exectuion Pipeline
+## Execution Pipeline
 ```
-                                          (disable pipeline)
+                                          (auto-pilot on/of)
                        Main-Pipeline   <---------------------- Manual-Control
                    +-----+-----+-----+                         |
-Path-Planning      | MV  |     |     |                         |
-                   +-----+-----+-----+                         | (directly send to Motion-Calibration)
-Line-Detecion      |     | MV  |     |                         |
+Path-Planning      | MV* |     |     |                         |
+                   +-----+-----+-----+                         | (MV* directly send to Motion-Calibration)
+Line-Detecion      |     | MV* |     |                         |
                    +-----+-----+-----+                         |
-Obstacle-Avoidance |     |     | MV  | -> Motion-Calibration <-+
+Obstacle-Avoidance |     |     | MV* | -> Motion-Calibration <-+
                    +-----+-----+-----+           ||
                                                  \/
-                                               +-----+
-                                               | MV  |
-                                               +-----+
+                                           +------------+
+                                           | Pin Signal |
+                                           +------------+
                                                  ||
                                                  \/
-                                             Arduino-Board
+                                            Arduino-Board
+
+*MV - Motion Vector
 ```
+
+## Motion Vector
+[Structure represents vehicle motion](https://github.com/vlmarkov/self-driving-arduino-car/blob/main/ros2-modules/interfaces/msg/MotionVector.msg):
+- acceleration
+- steer angle
