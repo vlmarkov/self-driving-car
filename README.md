@@ -1,4 +1,4 @@
-# self-driving-arduino-car
+# Self-Driving Arduino Car
 
 A very basic self driving arduino car
 
@@ -9,7 +9,7 @@ A very basic self driving arduino car
 - motion planing
 - manual control
 
-# Prepare your ros2 environment
+# Prepare your ROS2 environment
 1. According to [official documentation](https://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html#source-the-setup-files) for every new shell you will need to run this command to have access to the ROS 2 commands:
 ```
 source /opt/ros/jazzy/setup.bash
