@@ -36,5 +36,3 @@ RaspberryPi Pins        Arduino Pins
 
 ## Turn Left and Right
 This car has no a steering mechanism, to workaround this limitation we will send reverse voltage values on each side of car motors to turn left and right.
-
-TODO: calibration procedure, sterring algorithm
