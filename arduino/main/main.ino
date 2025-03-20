@@ -1,5 +1,5 @@
-#include <pins.h>
-#include <motor_commands.h>
+#include "pins.h"
+#include "motor_commands.h"
 
 void setup() {
     pinMode(ENGINE_LEFT_PIN, OUTPUT);
@@ -13,14 +13,17 @@ void setup() {
     pinMode(FROM_RAPSBERRY_PIN_0, INPUT_PULLUP);
     pinMode(FROM_RAPSBERRY_PIN_1, INPUT_PULLUP);
     pinMode(FROM_RAPSBERRY_PIN_2, INPUT_PULLUP);
+    pinMode(FROM_RAPSBERRY_PIN_3, INPUT_PULLUP);
 }
   
 void loop() {
-    int is_stop = digitalRead(FROM_RAPSBERRY_PIN_0);
-    int is_forward = digitalRead(FROM_RAPSBERRY_PIN_1);
-    int is_left_turn = digitalRead(FROM_RAPSBERRY_PIN_0);
+    int binary_command = 0;
+    binary_command |= (digitalRead(FROM_RAPSBERRY_PIN_0) << FROM_RAPSBERRY_PIN_0);
+    binary_command |= (digitalRead(FROM_RAPSBERRY_PIN_1) << FROM_RAPSBERRY_PIN_1);
+    binary_command |= (digitalRead(FROM_RAPSBERRY_PIN_2) << FROM_RAPSBERRY_PIN_2);
+    binary_command |= (digitalRead(FROM_RAPSBERRY_PIN_3) << FROM_RAPSBERRY_PIN_3);
 
-    MotorCommands mc = get_motor_commands(is_stop, is_forward, is_left_turn);
+    MotorCommands mc = get_motor_commands(binary_command);
 
     digitalWrite(ENGINE_LEFT_HIGH_PIN, mc.engine_left_high);
     digitalWrite(ENGINE_LEFT_LOW_PIN, mc.engine_left_low);

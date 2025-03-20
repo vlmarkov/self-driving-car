@@ -1,4 +1,4 @@
-#pragme once
+#pragma once
 
 // Left side of Motors
 const int ENGINE_LEFT_PIN = 5; 
@@ -14,3 +14,4 @@ const int ENGINE_RIGHT_LOW_PIN = 8;
 const int FROM_RAPSBERRY_PIN_0 = 0; // Actual Raspberry Pi pin 21
 const int FROM_RAPSBERRY_PIN_1 = 1; // Actual Raspberry Pi pin 22
 const int FROM_RAPSBERRY_PIN_2 = 2; // Actual Raspberry Pi pin 23
+const int FROM_RAPSBERRY_PIN_3 = 3; // Actual Raspberry Pi pin 24

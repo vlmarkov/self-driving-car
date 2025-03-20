@@ -18,10 +18,10 @@ Connection between motors and Arduino is made through an H-Bridge in order to co
   
 ```
 RaspberryPi Pins        Arduino Pins
-[21] stop -------------> [ 0]
-[22] forward/backward -> [ 1]
-[23] left/right -------> [ 2]
-                         [ 3]
+[21] forward  ---------> [ 0]
+[22] backward ---------> [ 1]
+[23] left     ---------> [ 2]
+[24] right    ---------> [ 3]
                          [ 4]
                          [ 5] -----> engine left
                          [ 6] -----> engine right

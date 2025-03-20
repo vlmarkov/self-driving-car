@@ -1,17 +1,16 @@
-#include <motor_commands.h>
+#include "motor_commands.h"
 
-MotorCommands get_motor_values(int is_stop, int is_forward, int is_left_turn) {
+MotorCommands get_motor_commands(int binary_command) {
     MotorCommands mc;
-
-  if (is_stop == 1) {
-        mc.engine_left_high = 1;
-        mc.engine_left_low = 0;
-        mc.engine_right_high = 1;
-        mc.engine_right_low = 0;
+    mc.engine_left_high = 1;
+    mc.engine_left_low = 0;
+    mc.engine_right_high = 1;
+    mc.engine_right_low = 0;
         
-        mc.engine_left_voltage = 0;
-        mc.engine_right_voltage = 0;
-    } else if (is_forward == 1) {
+    mc.engine_left_voltage = 0;
+    mc.engine_right_voltage = 0;
+
+    if (binary_command == FORWARD) {
         mc.engine_left_high = 0;
         mc.engine_left_low = 1;
         mc.engine_right_high = 0;
@@ -19,7 +18,7 @@ MotorCommands get_motor_values(int is_stop, int is_forward, int is_left_turn) {
 
         mc.engine_left_voltage = 250;
         mc.engine_right_voltage = 250;
-    } else if (is_forward == 0) {
+    } else if (binary_command == BACKWARD) {
         mc.engine_left_high = 1;
         mc.engine_left_low = 0;
         mc.engine_right_high = 1;
@@ -27,7 +26,7 @@ MotorCommands get_motor_values(int is_stop, int is_forward, int is_left_turn) {
     
         mc.engine_left_voltage = 250;
         mc.engine_right_voltage = 250;
-    } else if (is_left_turn == 1) {
+    } else if (binary_command == LEFT_TURN) {
         mc.engine_left_high = 0;
         mc.engine_left_low = 1;
         mc.engine_right_high = 0;
@@ -35,7 +34,7 @@ MotorCommands get_motor_values(int is_stop, int is_forward, int is_left_turn) {
 
         mc.engine_left_voltage = 0;
         mc.engine_right_voltage = 230;
-    } else if (is_left_turn == 0) {
+    } else if (binary_command == RIGHT_TURN) {
         mc.engine_left_high = 0;
         mc.engine_left_low = 1;
         mc.engine_right_high = 1;
