@@ -16,3 +16,8 @@ TODO picture
 ## Pins Descriptions
 
 TODO description
+
+## How To Run
+```
+ros2 run motion-calibration motion_calibration
+```
