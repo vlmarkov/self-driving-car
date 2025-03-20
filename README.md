@@ -28,6 +28,11 @@ source install/local_setup.bash
 make all
 ```
 
+# Test
+```
+make tests
+```
+
 # Run
 1. Choose module to run
 ```
