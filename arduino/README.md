@@ -25,7 +25,7 @@ RaspberryPi Pins        Arduino Pins
                          [ 4]
                          [ 5] -----> engine left
                          [ 6] -----> engine right
-                         [ 7] -----> eninge left high
+                         [ 7] -----> engine left high
                          [ 8] -----> engine right low
                          [ 9] -----> engine right high
                          [10]
