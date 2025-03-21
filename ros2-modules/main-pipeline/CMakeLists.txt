@@ -20,7 +20,7 @@ find_package(motion-calibration REQUIRED)
 include_directories(include)
 
 add_executable(main_pipeline src/main.cpp
-                             src/main_pipeline.cpp
+                             src/ros_module.cpp
 )
 
 ament_target_dependencies(main_pipeline
