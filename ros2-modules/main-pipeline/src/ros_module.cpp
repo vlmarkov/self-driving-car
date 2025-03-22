@@ -9,17 +9,24 @@
 
 using namespace std::chrono_literals;
 
+namespace {
+
+constexpr auto DEFAULT_TICK_TIMEOUT = 1000ms;
+constexpr auto DEFAULT_QUEUE_SIZE = 100;
+
+} // namespace
+
 MainPipeline::MainPipeline()
     : Node(MainPipeline::kName)
 {
     auto cb = [this]() -> void { this->tick_(); };
-    timer_ = this->create_wall_timer(1000ms, cb);
+    timer_ = this->create_wall_timer(DEFAULT_TICK_TIMEOUT, cb);
 
     manual_control_module_ = add_module_(ManualControl::kName);
     motion_calibration_module_ = add_module_(MotionCalibration::kName);
 }
 
-void MainPipeline::add_module(const std::string& name) {
+void MainPipeline::add_module(std::string name) {
     if (module_name_set_.contains(name))
         throw std::runtime_error("can't add already existed module!");
 
@@ -42,9 +49,9 @@ void MainPipeline::tick_() {
     }
 }
 
-void MainPipeline::transfer_message_(const std::string& auto_pilot, std::shared_ptr<SubscribedModule> from, std::shared_ptr<SubscribedModule> to) {
+void MainPipeline::transfer_message_(std::string_view auto_pilot, std::shared_ptr<SubscribedModule> from, std::shared_ptr<SubscribedModule> to) {
     RCLCPP_INFO(this->get_logger(), "[AUTO-PILOT %s] from `%s` to `%s` acceleration %f steer %f",
-        auto_pilot.c_str(),
+        auto_pilot.data(),
         from->name.c_str(),
         to->name.c_str(),
         from->data.acceleration,
@@ -54,7 +61,7 @@ void MainPipeline::transfer_message_(const std::string& auto_pilot, std::shared_
     to->publisher->publish(from->data);
 }
 
-std::shared_ptr<SubscribedModule> MainPipeline::add_module_(const std::string& name) {
+std::shared_ptr<SubscribedModule> MainPipeline::add_module_(std::string name) {
     auto module = std::make_shared<SubscribedModule>();
 
     auto cb = [module](interfaces::msg::MotionVector::UniquePtr mv) -> void {
@@ -62,8 +69,8 @@ std::shared_ptr<SubscribedModule> MainPipeline::add_module_(const std::string& n
     };
 
     module->name = name;
-    module->publisher = this->create_publisher<interfaces::msg::MotionVector>(name + "In" , 100);
-    module->subscription = this->create_subscription<interfaces::msg::MotionVector>(name + "Out", 100, cb);
+    module->publisher = this->create_publisher<interfaces::msg::MotionVector>(name + "In" , DEFAULT_QUEUE_SIZE);
+    module->subscription = this->create_subscription<interfaces::msg::MotionVector>(name + "Out", DEFAULT_QUEUE_SIZE, cb);
 
     return module;
 }

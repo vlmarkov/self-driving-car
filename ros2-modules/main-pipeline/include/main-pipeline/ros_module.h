@@ -22,7 +22,7 @@ public:
     MainPipeline();
     ~MainPipeline() = default;
 
-    void add_module(const std::string& name);
+    void add_module(std::string name);
 
 private:
     rclcpp::TimerBase::SharedPtr timer_;
@@ -33,6 +33,6 @@ private:
     std::vector<std::shared_ptr<SubscribedModule>> module_subscriptions_;
 
     void tick_();
-    void transfer_message_(const std::string& auto_pilot, std::shared_ptr<SubscribedModule> from, std::shared_ptr<SubscribedModule> to);
-    std::shared_ptr<SubscribedModule> add_module_(const std::string& name);
+    void transfer_message_(std::string_view auto_pilot, std::shared_ptr<SubscribedModule> from, std::shared_ptr<SubscribedModule> to);
+    std::shared_ptr<SubscribedModule> add_module_(std::string name);
 };
