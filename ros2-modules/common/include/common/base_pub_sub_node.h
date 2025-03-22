@@ -19,6 +19,7 @@ class IPubSubNode
 public:
     virtual ~IPubSubNode() = default;
 
+    virtual void log(std::string log_msg) const = 0;
     virtual void set_publish_msg(interfaces::msg::MotionVector msg) = 0;
     virtual interfaces::msg::MotionVector get_subscription_msg() = 0;
 };
@@ -29,6 +30,7 @@ public:
     BasePubSubNode(const PubSubCfg& cfg);
     ~BasePubSubNode() = default;
 
+    void log(std::string log_msg) const final;
     void set_publish_msg(interfaces::msg::MotionVector msg) final;
     interfaces::msg::MotionVector get_subscription_msg() final;
 

@@ -51,3 +51,7 @@ interfaces::msg::MotionVector BasePubSubNode::get_subscription_msg()
     std::lock_guard<std::mutex> lock(subscription_msg_mutex_);
     return subscription_msg_;
 }
+
+void BasePubSubNode::log(std::string log_msg) const {
+    RCLCPP_INFO(this->get_logger(), log_msg.c_str());
+}

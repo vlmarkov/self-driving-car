@@ -1,21 +1,31 @@
 # Motion Calibration
 
 ## Basic Information
-This module responsible to filter peaks of the car motion and transfer C++ structure fields values to pin voltage value for Arduino board.
+This module responsible to transfer C++ structure fields values to the pin digital value for Arduino board.
 
 ## Feature
 - store history of the previos MotionVector structre values
 - filter motion peaks (to make a very smooth motion)
-- transfer C++ structure fields values to pin voltage
+- transfer C++ structure fields values to pin digital value
 
 ## Connection Scheme
 Connection between RaspberryPi and Arduino is made through simple pin connection.
 
-TODO picture
+```
+RaspberryPi Pins        Arduino Pins
+     [21]   -----------> [ 0]
+     [22]   -----------> [ 1]
+     [23]   -----------> [ 2]
+     [24]   -----------> [ 3]
+                         [ 4]
+                         ....
+```
 
 ## Pins Descriptions
-
-TODO description
+- Pin 21 forward command
+- Pin 22 backward command
+- Pin 23 left turn command
+- Pin 24 right turn command
 
 ## How To Run
 ```
