@@ -10,6 +10,8 @@ public:
     MotionCalibration(std::shared_ptr<IPubSubNode> pub_sub_node);
     ~MotionCalibration() = default;
 
+    void process_motion_vector();
+
 private:
     std::shared_ptr<IPubSubNode> pub_sub_node_;
 };

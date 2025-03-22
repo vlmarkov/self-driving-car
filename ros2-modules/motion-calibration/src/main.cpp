@@ -2,6 +2,12 @@
 
 using namespace std::chrono_literals;
 
+void run(std::stop_token stop_token, std::shared_ptr<MotionCalibration> mc) {
+    while(!stop_token.stop_requested()) {
+        mc->process_motion_vector();
+    }
+}
+
 int main(int argc, char * argv[])
 {
     rclcpp::init(argc, argv);
@@ -13,7 +19,9 @@ int main(int argc, char * argv[])
         .duration = 500ms
     };
     auto pub_sub_node = std::make_shared<BasePubSubNode>(cfg);
-    auto manual_control = std::make_shared<MotionCalibration>(pub_sub_node);
+    auto motion_calibration = std::make_shared<MotionCalibration>(pub_sub_node);
+
+    std::jthread thread(run, motion_calibration);
 
     rclcpp::spin(pub_sub_node);
     rclcpp::shutdown();
