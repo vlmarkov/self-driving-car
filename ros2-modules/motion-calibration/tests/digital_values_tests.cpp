@@ -10,7 +10,7 @@ TEST(DigitalValuesTests, ExpectStop) {
     EXPECT_EQ(digital_values[0].backward, false);
     EXPECT_EQ(digital_values[0].left_turn, false);
     EXPECT_EQ(digital_values[0].right_turn, false);
-    EXPECT_EQ(digital_values[0].timeout_ms, 100);
+    EXPECT_EQ(digital_values[0].timeout_ms, 1000);
     EXPECT_EQ(digital_values[0].command, "stop");
 }
 
@@ -22,7 +22,7 @@ TEST(DigitalValuesTests, ExpectForward) {
     EXPECT_EQ(digital_values[0].backward, false);
     EXPECT_EQ(digital_values[0].left_turn, false);
     EXPECT_EQ(digital_values[0].right_turn, false);
-    EXPECT_EQ(digital_values[0].timeout_ms, 100);
+    EXPECT_EQ(digital_values[0].timeout_ms, 1000);
     EXPECT_EQ(digital_values[0].command, "forward");
 }
 
@@ -34,7 +34,7 @@ TEST(DigitalValuesTests, ExpectBackward) {
     EXPECT_EQ(digital_values[0].backward, true);
     EXPECT_EQ(digital_values[0].left_turn, false);
     EXPECT_EQ(digital_values[0].right_turn, false);
-    EXPECT_EQ(digital_values[0].timeout_ms, 100);
+    EXPECT_EQ(digital_values[0].timeout_ms, 1000);
     EXPECT_EQ(digital_values[0].command, "backward");
 }
 
@@ -46,14 +46,14 @@ TEST(DigitalValuesTests, ExpectLeft) {
     EXPECT_EQ(digital_values[0].backward, false);
     EXPECT_EQ(digital_values[0].left_turn, true);
     EXPECT_EQ(digital_values[0].right_turn, false);
-    EXPECT_EQ(digital_values[0].timeout_ms, 50);
+    EXPECT_EQ(digital_values[0].timeout_ms, 500);
     EXPECT_EQ(digital_values[0].command, "left");
 
     EXPECT_EQ(digital_values[1].forward, false);
     EXPECT_EQ(digital_values[1].backward, false);
     EXPECT_EQ(digital_values[1].left_turn, false);
     EXPECT_EQ(digital_values[1].right_turn, false);
-    EXPECT_EQ(digital_values[1].timeout_ms, 50);
+    EXPECT_EQ(digital_values[1].timeout_ms, 500);
     EXPECT_EQ(digital_values[1].command, "stop");
 }
 
@@ -65,14 +65,14 @@ TEST(DigitalValuesTests, ExpectForwardLeft) {
     EXPECT_EQ(digital_values[0].backward, false);
     EXPECT_EQ(digital_values[0].left_turn, true);
     EXPECT_EQ(digital_values[0].right_turn, false);
-    EXPECT_EQ(digital_values[0].timeout_ms, 50);
+    EXPECT_EQ(digital_values[0].timeout_ms, 500);
     EXPECT_EQ(digital_values[0].command, "left");
 
     EXPECT_EQ(digital_values[1].forward, true);
     EXPECT_EQ(digital_values[1].backward, false);
     EXPECT_EQ(digital_values[1].left_turn, false);
     EXPECT_EQ(digital_values[1].right_turn, false);
-    EXPECT_EQ(digital_values[1].timeout_ms, 50);
+    EXPECT_EQ(digital_values[1].timeout_ms, 500);
     EXPECT_EQ(digital_values[1].command, "forward");
 }
 
@@ -84,14 +84,14 @@ TEST(DigitalValuesTests, ExpectBackwardLeft) {
     EXPECT_EQ(digital_values[0].backward, false);
     EXPECT_EQ(digital_values[0].left_turn, true);
     EXPECT_EQ(digital_values[0].right_turn, false);
-    EXPECT_EQ(digital_values[0].timeout_ms, 50);
+    EXPECT_EQ(digital_values[0].timeout_ms, 500);
     EXPECT_EQ(digital_values[0].command, "left");
 
     EXPECT_EQ(digital_values[1].forward, false);
     EXPECT_EQ(digital_values[1].backward, true);
     EXPECT_EQ(digital_values[1].left_turn, false);
     EXPECT_EQ(digital_values[1].right_turn, false);
-    EXPECT_EQ(digital_values[1].timeout_ms, 50);
+    EXPECT_EQ(digital_values[1].timeout_ms, 500);
     EXPECT_EQ(digital_values[1].command, "backward");
 }
 
@@ -103,14 +103,14 @@ TEST(DigitalValuesTests, ExpectRight) {
     EXPECT_EQ(digital_values[0].backward, false);
     EXPECT_EQ(digital_values[0].left_turn, false);
     EXPECT_EQ(digital_values[0].right_turn, true);
-    EXPECT_EQ(digital_values[0].timeout_ms, 50);
+    EXPECT_EQ(digital_values[0].timeout_ms, 500);
     EXPECT_EQ(digital_values[0].command, "right");
 
     EXPECT_EQ(digital_values[1].forward, false);
     EXPECT_EQ(digital_values[1].backward, false);
     EXPECT_EQ(digital_values[1].left_turn, false);
     EXPECT_EQ(digital_values[1].right_turn, false);
-    EXPECT_EQ(digital_values[1].timeout_ms, 50);
+    EXPECT_EQ(digital_values[1].timeout_ms, 500);
     EXPECT_EQ(digital_values[1].command, "stop");
 }
 
@@ -122,14 +122,14 @@ TEST(DigitalValuesTests, ExpectForwardRight) {
     EXPECT_EQ(digital_values[0].backward, false);
     EXPECT_EQ(digital_values[0].left_turn, false);
     EXPECT_EQ(digital_values[0].right_turn, true);
-    EXPECT_EQ(digital_values[0].timeout_ms, 50);
+    EXPECT_EQ(digital_values[0].timeout_ms, 500);
     EXPECT_EQ(digital_values[0].command, "right");
 
     EXPECT_EQ(digital_values[1].forward, true);
     EXPECT_EQ(digital_values[1].backward, false);
     EXPECT_EQ(digital_values[1].left_turn, false);
     EXPECT_EQ(digital_values[1].right_turn, false);
-    EXPECT_EQ(digital_values[1].timeout_ms, 50);
+    EXPECT_EQ(digital_values[1].timeout_ms, 500);
     EXPECT_EQ(digital_values[1].command, "forward");
 }
 
@@ -141,14 +141,14 @@ TEST(DigitalValuesTests, ExpectBackwardRight) {
     EXPECT_EQ(digital_values[0].backward, false);
     EXPECT_EQ(digital_values[0].left_turn, false);
     EXPECT_EQ(digital_values[0].right_turn, true);
-    EXPECT_EQ(digital_values[0].timeout_ms, 50);
+    EXPECT_EQ(digital_values[0].timeout_ms, 500);
     EXPECT_EQ(digital_values[0].command, "right");
 
     EXPECT_EQ(digital_values[1].forward, false);
     EXPECT_EQ(digital_values[1].backward, true);
     EXPECT_EQ(digital_values[1].left_turn, false);
     EXPECT_EQ(digital_values[1].right_turn, false);
-    EXPECT_EQ(digital_values[1].timeout_ms, 50);
+    EXPECT_EQ(digital_values[1].timeout_ms, 500);
     EXPECT_EQ(digital_values[1].command, "backward");
 }
 

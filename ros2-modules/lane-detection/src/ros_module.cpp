@@ -15,5 +15,5 @@ void LaneDetection::process_frame(cv::Mat frame) {
     // mv.acceleration = 1.0;
     mv.steering = status.steer_angle;
 
-    pub_sub_node_->set_publish_msg(std::move(mv));
+    pub_sub_node_->publish_msg(std::move(mv));
 }

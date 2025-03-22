@@ -15,5 +15,5 @@ void ManualControl::process_command(Command cmd) {
     mv.acceleration = cmd.acceleration;
     mv.steering = cmd.steering;
 
-    pub_sub_node_->set_publish_msg(std::move(mv));
+    pub_sub_node_->publish_msg(std::move(mv));
 }
