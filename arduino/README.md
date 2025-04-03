@@ -10,28 +10,30 @@ Arduino board is used to control car motion:
 Arduino UNO R3 has 0-13 digital pins.
 - some pins are used for motors
 - other pins are used for RaspberryPi commands
-- [pins scheme](https://store-usa.arduino.cc/products/arduino-uno-rev3)
+- [pins scheme](https://docs.arduino.cc/hardware/uno-rev3/)
+- [pins scheme](https://robu.in/arduino-pin-configuration/)
 
 Connection between motors and Arduino is made through an H-Bridge in order to control the left and right motors separately.
 - H-Bridge is connected to the power supply, Arduino and motors
+- [L298N H-Bridge guide](https://www.bluetin.io/guides/l298n-h-bridge-dc-motor-driver-guide/)
 - [connection scheme](https://howtomechatronics.com/tutorials/arduino/arduino-dc-motor-control-tutorial-l298n-pwm-h-bridge/)
-  
+
 ```
-RaspberryPi Pins        Arduino Pins
+RaspberryPi Pins        Arduino Pins                      L298N H-Bridge pins
 [21] forward  ---------> [ 0]
 [22] backward ---------> [ 1]
 [23] left     ---------> [ 2]
 [24] right    ---------> [ 3]
-                         [ 4]
-                         [ 5] -----> engine left
-                         [ 6] -----> engine right
-                         [ 7] -----> engine left high
-                         [ 8] -----> engine right low
-                         [ 9] -----> engine right high
-                         [10]
-                         [11] -----> engine left low
-                         [12]
-                         [13]
+                          ...
+                         [ 5] -----> engine left pwm      ---> [ENA]
+                         [ 6] -----> engine left reverse  ---> [IN1]
+                         [ 7] -----> engine left forward  ---> [IN2]
+                         [ 8] -----> engine right reverse ---> [IN3]
+                         [ 9] -----> engine right forward ---> [IN4]
+                         [10] -----> engine right pwm     ---> [ENB]
+                          ...
+                         [GND] ------------common wire-------- [GND]  <- -9V battery
+           battery 9V -> [PWR]                                 [+12V] <- +9V battery
 ```
 
 ## Turn Left and Right

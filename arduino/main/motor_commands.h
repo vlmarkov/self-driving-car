@@ -1,17 +1,22 @@
 #pragma once
 
+constexpr auto HIGH_SIGNAL = true;
+constexpr auto LOW_SIGNAL = false;
+constexpr auto DEFAULT_PWM = 200;
+constexpr auto TURN_PWM = 150;
+
 constexpr int FORWARD = 1;
 constexpr int BACKWARD = 2;
 constexpr int LEFT_TURN = 4;
 constexpr int RIGHT_TURN = 8;
 
 struct MotorCommands {
-    bool engine_left_high{true};
-    bool engine_left_low{false};
-    bool engine_right_high{true};
-    bool engine_right_low{false};
-    int engine_left_voltage{0};
-    int engine_right_voltage{0};
+    bool engine_left_forward{LOW_SIGNAL};
+    bool engine_left_reverse{LOW_SIGNAL};
+    bool engine_right_forward{LOW_SIGNAL};
+    bool engine_right_reverse{LOW_SIGNAL};
+    int engine_left_pwm{0};
+    int engine_right_pwm{0};
 };
 
 MotorCommands get_motor_commands(int binary_command);

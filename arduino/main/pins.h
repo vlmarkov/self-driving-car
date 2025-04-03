@@ -1,17 +1,17 @@
 #pragma once
 
-// Left side of Motors
-const int ENGINE_LEFT_PIN = 5; 
-const int ENGINE_LEFT_HIGH_PIN = 7;
-const int ENGINE_LEFT_LOW_PIN = 11;
+// Motors A, Left side
+constexpr auto ENGINE_LEFT_PWM_PIN = 5;      // ENA - Enable and PWM
+constexpr auto ENGINE_LEFT_REVERSE_PIN = 6;  // IN1 - Reverse Drive
+constexpr auto ENGINE_LEFT_FORWARD_PIN = 7;  // IN2 - Forward Drive
 
-// Right side of Motors
-const int ENGINE_RIGHT_PIN = 6;
-const int ENGINE_RIGHT_HIGH_PIN = 9;
-const int ENGINE_RIGHT_LOW_PIN = 8;
+// Motors B, Right side
+constexpr auto ENGINE_RIGHT_FORWARD_PIN = 8; // IN3 - Forward Drive
+constexpr auto ENGINE_RIGHT_REVERSE_PIN = 9; // IN4 - Reverse Drive
+constexpr auto ENGINE_RIGHT_PWM_PIN = 10;    // ENB - Enable and PWM
 
 // Raspberry Pi connection
-const int FROM_RAPSBERRY_PIN_0 = 0; // Actual Raspberry Pi pin 21
-const int FROM_RAPSBERRY_PIN_1 = 1; // Actual Raspberry Pi pin 22
-const int FROM_RAPSBERRY_PIN_2 = 2; // Actual Raspberry Pi pin 23
-const int FROM_RAPSBERRY_PIN_3 = 3; // Actual Raspberry Pi pin 24
+constexpr auto FROM_RAPSBERRY_PIN_0 = 0; // Actual Raspberry Pi pin 21
+constexpr auto FROM_RAPSBERRY_PIN_1 = 1; // Actual Raspberry Pi pin 22
+constexpr auto FROM_RAPSBERRY_PIN_2 = 2; // Actual Raspberry Pi pin 23
+constexpr auto FROM_RAPSBERRY_PIN_3 = 3; // Actual Raspberry Pi pin 24
