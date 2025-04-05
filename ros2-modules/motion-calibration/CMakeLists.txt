@@ -22,7 +22,9 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(common REQUIRED)
 find_package(interfaces REQUIRED)
-find_package(fmt)
+find_package(fmt REQUIRED)
+
+find_library(WIRINGPI_LIBRARIES NAMES wiringPi)
 
 include_directories(include)
 
@@ -33,7 +35,7 @@ add_executable(motion_calibration src/main.cpp
 
 ament_target_dependencies(motion_calibration common)
 
-target_link_libraries(motion_calibration fmt::fmt)
+target_link_libraries(motion_calibration fmt::fmt ${WIRINGPI_LIBRARIES})
 
 ament_export_include_directories(include)
 

@@ -10,11 +10,12 @@
 MotionCalibration::MotionCalibration(std::shared_ptr<IPubSubNode> pub_sub_node)
     : pub_sub_node_(pub_sub_node)
 {
-    //wiringPiSetup();
-    //pinMode(FORWARD_PIN, OUTPUT);
-    //pinMode(BACKWARD_PIN, OUTPUT);
-    //pinMode(LEFT_TURN_PIN, OUTPUT);
-    //pinMode(RIGHT_TURN_PIN, OUTPUT);
+    wiringPiSetup();
+
+    pinMode(FORWARD_PIN,    OUTPUT);
+    pinMode(BACKWARD_PIN,   OUTPUT);
+    pinMode(LEFT_TURN_PIN,  OUTPUT);
+    pinMode(RIGHT_TURN_PIN, OUTPUT);
 }
 
 void MotionCalibration::process_motion_vector() {
