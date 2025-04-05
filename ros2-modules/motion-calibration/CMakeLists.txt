@@ -35,7 +35,7 @@ add_executable(motion_calibration src/main.cpp
 
 ament_target_dependencies(motion_calibration common)
 
-target_link_libraries(motion_calibration fmt::fmt ${WIRINGPI_LIBRARIES})
+target_link_libraries(motion_calibration fmt::fmt wiringPi)
 
 ament_export_include_directories(include)
 

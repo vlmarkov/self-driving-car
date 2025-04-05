@@ -24,10 +24,10 @@ void MotionCalibration::process_motion_vector() {
 
     for (const auto& dv : digital_values) {
         pub_sub_node_->log(fmt::format("{} command", dv.command.c_str()));
-        //digitalWrite(FORWARD_PIN, dv.pin_forward);
-        //digitalWrite(BACKWARD_PIN, dv.pin_backward);
-        //digitalWrite(LEFT_TURN_PIN, dv.pin_left_turn);
-        //digitalWrite(RIGHT_TURN_PIN, dv.pin_right_turn);
+        digitalWrite(FORWARD_PIN, dv.forward);
+        digitalWrite(BACKWARD_PIN, dv.backward);
+        digitalWrite(LEFT_TURN_PIN, dv.left_turn);
+        digitalWrite(RIGHT_TURN_PIN, dv.right_turn);
         std::this_thread::sleep_for(std::chrono::milliseconds(dv.timeout_ms));
     }
 }
