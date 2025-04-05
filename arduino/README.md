@@ -20,17 +20,17 @@ Connection between motors and Arduino is made through an H-Bridge in order to co
 
 ```
 RaspberryPi Pins        Arduino Pins                      L298N H-Bridge pins
-[21] forward  ---------> [ 0]
-[22] backward ---------> [ 1]
-[23] left     ---------> [ 2]
-[24] right    ---------> [ 3]
+[31] forward  ---------> [ D0]
+[33] backward ---------> [ D1]
+[35] left     ---------> [ D2]
+[37] right    ---------> [ D3]
                           ...
-                         [ 5] -----> engine left pwm      ---> [ENA]
-                         [ 6] -----> engine left reverse  ---> [IN1]
-                         [ 7] -----> engine left forward  ---> [IN2]
-                         [ 8] -----> engine right reverse ---> [IN3]
-                         [ 9] -----> engine right forward ---> [IN4]
-                         [10] -----> engine right pwm     ---> [ENB]
+                         [ D5] -----> engine left pwm      ---> [ENA]
+                         [ D6] -----> engine left reverse  ---> [IN1]
+                         [ D7] -----> engine left forward  ---> [IN2]
+                         [ D8] -----> engine right reverse ---> [IN3]
+                         [ D9] -----> engine right forward ---> [IN4]
+                         [D10] -----> engine right pwm     ---> [ENB]
                           ...
                          [GND] ------------common wire-------- [GND]  <- -9V battery
            battery 9V -> [PWR]                                 [+12V] <- +9V battery

@@ -13,19 +13,18 @@ Connection between RaspberryPi and Arduino is made through simple pin connection
 
 ```
 RaspberryPi Pins        Arduino Pins
-     [21]   -----------> [ 0]
-     [22]   -----------> [ 1]
-     [23]   -----------> [ 2]
-     [24]   -----------> [ 3]
-                         [ 4]
+     [31]   -----------> [D0]
+     [33]   -----------> [D1]
+     [35]   -----------> [D2]
+     [37]   -----------> [D3]
                          ....
 ```
 
 ## Pins Descriptions
-- Pin 21 forward command
-- Pin 22 backward command
-- Pin 23 left turn command
-- Pin 24 right turn command
+- Pin 31 forward command
+- Pin 33 backward command
+- Pin 35 left turn command
+- Pin 37 right turn command
 
 ## How To Run
 ```

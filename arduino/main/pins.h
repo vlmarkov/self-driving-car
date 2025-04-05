@@ -11,7 +11,7 @@ constexpr auto ENGINE_RIGHT_REVERSE_PIN = 9; // IN4 - Reverse Drive
 constexpr auto ENGINE_RIGHT_PWM_PIN = 10;    // ENB - Enable and PWM
 
 // Raspberry Pi connection
-constexpr auto FROM_RAPSBERRY_PIN_0 = 0; // Actual Raspberry Pi pin 21
-constexpr auto FROM_RAPSBERRY_PIN_1 = 1; // Actual Raspberry Pi pin 22
-constexpr auto FROM_RAPSBERRY_PIN_2 = 2; // Actual Raspberry Pi pin 23
-constexpr auto FROM_RAPSBERRY_PIN_3 = 3; // Actual Raspberry Pi pin 24
+constexpr auto FROM_RAPSBERRY_PIN_0 = 0; // Actual Raspberry Pi pin 31
+constexpr auto FROM_RAPSBERRY_PIN_1 = 1; // Actual Raspberry Pi pin 33
+constexpr auto FROM_RAPSBERRY_PIN_2 = 2; // Actual Raspberry Pi pin 35
+constexpr auto FROM_RAPSBERRY_PIN_3 = 3; // Actual Raspberry Pi pin 37
