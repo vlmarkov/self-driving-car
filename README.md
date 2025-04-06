@@ -9,6 +9,20 @@ A very basic self driving arduino car
 - motion planing
 - manual control
 
+# Requirements
+- ubuntu 24.04
+- latest cmake version
+- latest gcc or clang version
+- arduino ide
+- gtest
+- [wiringpi](https://github.com/WiringPi/WiringPi/tree/master)
+  - do not forget to add user to gpio group
+  - or sudo `chmod g+rw /dev/gpiomem0`
+- opencv
+  - `sudo ln -s /usr/include/opencv4/opencv2 /usr/include/opencv2`
+- [ros2](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html)
+
+
 # Prepare your ROS2 environment
 1. According to [official documentation](https://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html#source-the-setup-files) for every new shell you will need to run this command to have access to the ROS 2 commands:
 ```
