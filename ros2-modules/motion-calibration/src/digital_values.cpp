@@ -1,6 +1,6 @@
 #include <motion-calibration/digital_values.h>
 
-std::vector<DigitalValues> convert_to_digital_values(float acceleration, float steering) {
+std::vector<DigitalValues> convert_to_digital_values(double acceleration, double steering) {
     std::vector<DigitalValues> result;
     auto remain_timeout_ms = 1000;
 

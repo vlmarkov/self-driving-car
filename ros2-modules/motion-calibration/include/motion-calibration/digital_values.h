@@ -12,4 +12,4 @@ struct DigitalValues {
     std::string command{};
 };
 
-std::vector<DigitalValues> convert_to_digital_values(float acceleration, float steering);
+std::vector<DigitalValues> convert_to_digital_values(double acceleration, double steering);
