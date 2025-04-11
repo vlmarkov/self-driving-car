@@ -2,8 +2,8 @@
 
 constexpr auto HIGH_SIGNAL = true;
 constexpr auto LOW_SIGNAL = false;
-constexpr auto DEFAULT_PWM = 200;
-constexpr auto TURN_PWM = 150;
+constexpr auto DEFAULT_PWM = 85;
+constexpr auto TURN_PWM = 75;
 
 constexpr int FORWARD = 1;
 constexpr int BACKWARD = 2;
