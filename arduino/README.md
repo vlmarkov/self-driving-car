@@ -38,13 +38,15 @@ RaspberryPi5 Pins       Arduino Uno Pins                     L298N H-Bridge pins
                          [ D9] -----> engine right forward ---> [IN4]
                          [D10] -----> engine right pwm     ---> [ENB]
                           ...
-                         [GND] ------------common wire-------- [GND]  <- -12V battery
+[6] ----common wire----- [GND] ------------common wire-------- [GND]  <- -12V battery
            battery 9V -> [PWR]                                 [+12V] <- +12V battery
 ```
 
-## Turn Left and Right
-This car has no steering mechanism, to workaround this limitation send reverse voltage values to the each side of car motors:
+## How to turn left and right?
+This car does not have a steering mechanism, to workaround this limitation send reverse voltage values to the each side of car motors:
 
 a) To turn left: left motors go backward, right motors go forward
 
 b) To turn right: left motors go forward, right motors go backward
+
+c) With fully charged battery on smooth surface you can get ~3 degrees accuracy on turning by sending 150 PWM value for 25ms long

@@ -1,9 +1,18 @@
 #pragma once
 
+/*****************************************************************************/
+/* Battery : 12V (fully charged)                                             */
+/* PWM     : 150                                                             */
+/* DELAY   : 25 ms                                                           */
+/* SURFACE : smooth (no additional friction)                                 */
+/*                                                                           */
+/* With these parameters the car can turn on ~3 degrees                      */
+/*****************************************************************************/
+constexpr auto TURN_PWM = 150;
+
+constexpr auto DEFAULT_PWM = 85;
 constexpr auto HIGH_SIGNAL = true;
 constexpr auto LOW_SIGNAL = false;
-constexpr auto DEFAULT_PWM = 85;
-constexpr auto TURN_PWM = 75;
 
 constexpr int FORWARD = 1;
 constexpr int BACKWARD = 2;
