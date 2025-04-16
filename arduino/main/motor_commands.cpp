@@ -16,7 +16,7 @@ MotorCommands get_motor_commands(int binary_command) {
         mc.engine_left_reverse  = LOW_SIGNAL;
         mc.engine_right_forward = HIGH_SIGNAL;
         mc.engine_right_reverse = LOW_SIGNAL;
-    
+
         mc.engine_left_pwm = DEFAULT_PWM;
         mc.engine_right_pwm = DEFAULT_PWM;
     } else if (binary_command == LEFT_TURN) {

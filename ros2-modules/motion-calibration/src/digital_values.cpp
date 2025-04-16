@@ -1,8 +1,8 @@
 #include <motion-calibration/digital_values.h>
 
-namespace {
+#include <cmath>
 
-constexpr auto DEFAULT_TIMEOUT_MS = 1000;
+namespace {
 
 DigitalValues create_stop() {
     DigitalValues dv;
@@ -48,16 +48,25 @@ DigitalValues create_left() {
     return dv;
 }
 
+size_t steering_to_cmd(double sterring) {
+    if (sterring == 0.0) {
+        return 0;
+    }
+
+    return static_cast<size_t>(fabs(sterring / CALIBRATED_ANGLE));
+}
 
 } // namespace
 
 std::vector<DigitalValues> convert_to_digital_values(double acceleration, double steering) {
     std::vector<DigitalValues> result;
 
-    if (steering > 0.0) {
-        result.push_back(create_right());
-    } else if (steering < 0.0) {
-        result.push_back(create_left());
+    for (size_t i = 0; i < steering_to_cmd(steering); ++i) {
+        if (steering > 0.0) {
+            result.push_back(create_right());
+        } else if (steering < 0.0) {
+            result.push_back(create_left());
+        }
     }
 
     if (acceleration > 0.0) {
