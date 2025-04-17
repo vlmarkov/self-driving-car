@@ -9,6 +9,12 @@
 /* With these parameters the car can turn on ~3 degrees                      */
 /*****************************************************************************/
 constexpr auto TURN_PWM = 150;
+/*****************************************************************************/
+/* Additional calibration information:                                       */
+/* 100 ms 150 pwm 37,5 degree                                                */
+/* 50 ms 150 pwm 10 degree 12v                                               */
+/* 25 ms 150 pwm 3-5 degree 12v                                              */
+/*****************************************************************************/
 
 constexpr auto DEFAULT_PWM = 85;
 constexpr auto HIGH_SIGNAL = true;
