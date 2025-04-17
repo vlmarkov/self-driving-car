@@ -4,10 +4,10 @@
 
 namespace {
 
-DigitalValues create_stop() {
+DigitalValues create_stop(int timeout_ms) {
     DigitalValues dv;
     dv.command = "stop";
-    dv.timeout_ms = DEFAULT_TIMEOUT_MS;
+    dv.timeout_ms = timeout_ms;
 
     return dv;
 }
@@ -61,11 +61,18 @@ size_t steering_to_cmd(double sterring) {
 std::vector<DigitalValues> convert_to_digital_values(double acceleration, double steering) {
     std::vector<DigitalValues> result;
 
-    for (size_t i = 0; i < steering_to_cmd(steering); ++i) {
-        if (steering > 0.0) {
+    // Split turn radius to discrete turn commands sequence
+    if (steering > 0.0) {
+        result.push_back(create_stop(BETWEEN_TURN_TIMEOUT_MS));
+        for (size_t i = 0; i < steering_to_cmd(steering); ++i) {
             result.push_back(create_right());
-        } else if (steering < 0.0) {
+            result.push_back(create_stop(BETWEEN_TURN_TIMEOUT_MS));
+        }
+    } else if (steering < 0.0) {
+        result.push_back(create_stop(BETWEEN_TURN_TIMEOUT_MS));
+        for (size_t i = 0; i < steering_to_cmd(steering); ++i) {
             result.push_back(create_left());
+            result.push_back(create_stop(BETWEEN_TURN_TIMEOUT_MS));
         }
     }
 
@@ -76,7 +83,7 @@ std::vector<DigitalValues> convert_to_digital_values(double acceleration, double
     }
 
     if (acceleration == 0.0 && steering == 0.0) {
-        result.push_back(create_stop());
+        result.push_back(create_stop(DEFAULT_TIMEOUT_MS));
     }
 
     return result;
