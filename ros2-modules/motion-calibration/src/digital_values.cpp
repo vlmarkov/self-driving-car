@@ -12,20 +12,20 @@ DigitalValues create_stop(int timeout_ms) {
     return dv;
 }
 
-DigitalValues create_backward() {
+DigitalValues create_backward(int timeout) {
     DigitalValues dv;
     dv.backward = true;
     dv.command = "backward";
-    dv.timeout_ms = DEFAULT_TIMEOUT_MS;
+    dv.timeout_ms = timeout;
 
     return dv;
 }
 
-DigitalValues create_forward() {
+DigitalValues create_forward(int timeout) {
     DigitalValues dv;
     dv.forward = true;
     dv.command = "forward";
-    dv.timeout_ms = DEFAULT_TIMEOUT_MS;
+    dv.timeout_ms = timeout;
 
     return dv;
 }
@@ -77,9 +77,9 @@ std::vector<DigitalValues> convert_to_digital_values(double acceleration, double
     }
 
     if (acceleration > 0.0) {
-        result.push_back(create_forward());
+        result.push_back(create_forward(steering != 0.0 ? 2 * DEFAULT_TIMEOUT_MS : DEFAULT_TIMEOUT_MS));
     } else if (acceleration < 0.0) {
-        result.push_back(create_backward());
+        result.push_back(create_backward(steering != 0.0 ? 2 * DEFAULT_TIMEOUT_MS : DEFAULT_TIMEOUT_MS));
     }
 
     if (acceleration == 0.0 && steering == 0.0) {
