@@ -20,7 +20,6 @@ A very basic self driving arduino car
   - or `sudo chmod g+rw /dev/gpiomem0`
 - opencv
   - `sudo ln -s /usr/include/opencv4/opencv2 /usr/include/opencv2`
-- [raspicam](https://github.com/cedricve/raspicam/tree/master)
 - [ros2](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html)
 
 
