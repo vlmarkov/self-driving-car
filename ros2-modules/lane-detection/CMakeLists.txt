@@ -90,4 +90,4 @@ add_executable(${PROJECT_NAME}-app
                src/lane.cpp
                src/lane_detection_module.cpp
 )
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS} -lraspicam -lraspicam_cv)
