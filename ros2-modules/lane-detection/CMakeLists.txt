@@ -57,10 +57,6 @@ install(TARGETS
 
 if(ENABLE_TESTS)
   enable_testing()
-  #find_package(ament_lint_auto REQUIRED)
-  #set(ament_cmake_copyright_FOUND TRUE)
-  #set(ament_cmake_cpplint_FOUND TRUE)
-  #ament_lint_auto_find_test_dependencies()
 
   find_package(ament_cmake_gtest REQUIRED)
   ament_add_gtest(${PROJECT_NAME}_lane_tests tests/lane_tests.cpp
@@ -90,4 +86,4 @@ add_executable(${PROJECT_NAME}-app
                src/lane.cpp
                src/lane_detection_module.cpp
 )
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS} -lraspicam -lraspicam_cv)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS})
