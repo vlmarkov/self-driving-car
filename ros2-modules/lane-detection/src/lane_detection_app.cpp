@@ -2,6 +2,7 @@
 
 #include <opencv2/opencv.hpp>
 
+// https://github.com/JetsonHacksNano/CSI-Camera/blob/master/simple_camera.cpp
 struct CameraConfig {
     int capture_width{1280};
     int capture_height{720};
