@@ -97,7 +97,7 @@ add_executable(${PROJECT_NAME}-app
                src/lane_detection_module.cpp
 )
 if (ENABLE_RASPBERY_BUILD)
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS})
-else()
   TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS} -llccv)
+else()
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS})
 endif()
