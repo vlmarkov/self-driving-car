@@ -75,7 +75,7 @@ if(ENABLE_TESTS)
                              $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                              $<INSTALL_INTERFACE:include>
   )
-  target_link_libraries(${PROJECT_NAME}_module_tests ${OpenCV_LIBS})
+  target_link_libraries(${PROJECT_NAME}_module_tests ${OpenCV_LIBS} -llccv)
 
 endif()
 
@@ -86,4 +86,4 @@ add_executable(${PROJECT_NAME}-app
                src/lane.cpp
                src/lane_detection_module.cpp
 )
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS} -llccv)

@@ -21,6 +21,7 @@ A very basic self driving arduino car
 - opencv
   - `sudo ln -s /usr/include/opencv4/opencv2 /usr/include/opencv2`
 - [ros2](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html)
+- [LLCV](https://github.com/kbarni/LCCV/tree/main) LCCV (libcamera bindings for OpenCV) is a small wrapper library that provides access to the Raspberry Pi camera in OpenCV.
 
 
 # Prepare your ROS2 environment

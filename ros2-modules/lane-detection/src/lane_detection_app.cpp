@@ -1,96 +1,49 @@
 #include <lane-detection/lane_detection_module.h>
 
+#include <lccv.hpp>
+#include <libcamera_app.hpp>
 #include <opencv2/opencv.hpp>
 
-// https://github.com/JetsonHacksNano/CSI-Camera/blob/master/simple_camera.cpp
-struct CameraConfig {
-    int capture_width{1280};
-    int capture_height{720};
-    int display_width{1280};
-    int display_height{720};
-    int framerate = 30 ;
-    int flip_method = 0 ;
-};
+int test_camera() {
+	uint32_t num_cams = LibcameraApp::GetNumberCameras();
+	std::cout << "Found " << num_cams << " cameras." << std::endl;
 
-std::string gstreamer_pipeline (const CameraConfig& cfg)
-{
-    return "nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)"
-        + std::to_string(cfg.capture_width)
-        + ", height=(int)"
-        + std::to_string(cfg.capture_height)
-        + ", framerate=(fraction)"
-        + std::to_string(cfg.framerate)
-        + "/1 ! nvvidconv flip-method="
-        + std::to_string(cfg.flip_method)
-        + " ! video/x-raw, width=(int)"
-        + std::to_string(cfg.display_width)
-        + ", height=(int)"
-        + std::to_string(cfg.display_height)
-        + ", format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink";
-}
+    uint32_t height = 720;
+    uint32_t width = 1280;
+    std::cout<<"Sample program for LCCV video capture"<<std::endl;
+    std::cout<<"Press ESC to stop."<<std::endl;
+    cv::Mat image = cv::Mat(height, width, CV_8UC3);
+    lccv::PiCamera cam;
+    cam.options->video_width=width;
+    cam.options->video_height=height;
+    cam.options->framerate=30;
+    cam.options->verbose=true;
+    cam.startVideo();
 
-int test_camera_2()
-{
-    std::string pipeline = gstreamer_pipeline(CameraConfig());
-    std::cout << "Using pipeline: \n\t" << pipeline << "\n";
 
-    cv::VideoCapture cap(pipeline, cv::CAP_GSTREAMER);
+    int ch=0;
+    LaneDetectionModule lm({});
 
-    if (!cap.isOpened()) {
-        std::cout << "Failed to open camera." << std::endl;
-        return (-1);
+    while(ch!=27){
+        if (!cam.getVideoFrame(image,1000)){
+            std::cout<<"Timeout error"<<std::endl;
+        } else {
+          auto frame = image;
+          auto status = lm.detect_lane(std::move(frame));
+          cv::imshow("Lane Detection Status", status.frame);
+          std::cout << status.direction << std::endl;
+          std::cout << status.steer_angle << std::endl;
+	    
+	}
+        ch=cv::waitKey(5);
     }
 
-    cv::namedWindow("CSI Camera", cv::WINDOW_AUTOSIZE);
-    cv::Mat img;
-
-    std::cout << "Hit ESC to exit" << "\n" ;
-    while(true)
-    {
-        if (!cap.read(img)) {
-            std::cout<<"Capture read error"<<std::endl;
-            break;
-        }
-
-        cv::imshow("CSI Camera", img);
-        int keycode = cv::waitKey(10) & 0xff ;
-        if (keycode == 27)
-            break ;
-    }
-
-    cap.release();
-    cv::destroyAllWindows() ;
-    return 0;
-}
-
-int test_camera_1()
-{
-    cv::VideoCapture cap;
-    // open the default camera, use something different from 0 otherwise;
-    // Check VideoCapture documentation.
-    const auto video_cam_dev = 0;
-    if (!cap.open(video_cam_dev))
-        return 0;
-
-    for (;;) {
-        cv::Mat frame;
-        cap >> frame;
-        if(frame.empty())
-        break; // end of video stream
-
-        cv::imshow("this is you, smile! :)", frame);
-        if ((cv::waitKey(10) % 256) == 27)
-            break; // waitKeypatch: check for 10ms: then stop capturing by pressing ESC=27
-    }
-
-    // the camera will be closed automatically upon exit
-    cap.release();
-    return 0;
+    cam.stopVideo();
+    cv::destroyAllWindows();
 }
 
 int main(int argc, char* argv[]) {
-    test_camera_1();
-    test_camera_2();
+    test_camera();
 
     auto frame = cv::imread(argv[1], cv::IMREAD_UNCHANGED);
     if (frame.empty()) {
