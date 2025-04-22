@@ -4,13 +4,19 @@ project(lane-detection)
 option(ENABLE_TESTS "Enable tests" OFF)
 option(ENABLE_COMPILER_OPTIONS "Enable advanced complier options/warnings" OFF)
 option(ENABLE_LATEST_CPP_STANDARD "Enable latest c++ standard" OFF)
+option(ENABLE_RASPBERY_BUILD "Enable respberry build" OFF)
 
 message(STATUS "Enable tests - " ${ENABLE_TESTS})
 message(STATUS "Enable advanced complier options/warnings - " ${ENABLE_COMPILER_OPTIONS})
 message(STATUS "Enable latest C++ standard - " ${ENABLE_LATEST_CPP_STANDARD})
+message(STATUS "Enable respberry build - " ${ENABLE_RASPBERY_BUILD})
 
 if (ENABLE_COMPILER_OPTIONS)
     add_compile_options(-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual -Wpedantic -Wconversion -Wsign-conversion -Wmisleading-indentation -Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wnull-dereference -Wuseless-cast -Wdouble-promotion -Wformat=2 -Wimplicit-fallthrough)
+endif()
+
+if (ENABLE_RASPBERY_BUILD)
+  add_compile_options(-DENABLE_RASPBERY_BUILD)
 endif()
 
 if (ENABLE_LATEST_CPP_STANDARD)
@@ -75,7 +81,11 @@ if(ENABLE_TESTS)
                              $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                              $<INSTALL_INTERFACE:include>
   )
-  target_link_libraries(${PROJECT_NAME}_module_tests ${OpenCV_LIBS} -llccv)
+  if (ENABLE_RASPBERY_BUILD)
+    target_link_libraries(${PROJECT_NAME}_module_tests ${OpenCV_LIBS} -llccv)
+  else()
+    target_link_libraries(${PROJECT_NAME}_module_tests ${OpenCV_LIBS})
+  endif()
 
 endif()
 
@@ -86,4 +96,8 @@ add_executable(${PROJECT_NAME}-app
                src/lane.cpp
                src/lane_detection_module.cpp
 )
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS} -llccv)
+if (ENABLE_RASPBERY_BUILD)
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS})
+else()
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS} -llccv)
+endif()

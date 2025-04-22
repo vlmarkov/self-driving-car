@@ -10,6 +10,7 @@ ENABLE_COMPILER_OPTIONS    := ON
 ENABLE_LATEST_CPP_STANDARD := ON
 # To debug purpose on your laptop (NOT Raspberry board) you can disable gpio write feature
 ENABLE_WIRING_PI_LIB       := ON
+ENABLE_RASPBERY_BUILD      := OFF
 
 all: interfaces common lane-detection manual-control obstacle-avoidance path-planning motion-calibration main-pipeline arduino-code
 
@@ -27,7 +28,7 @@ main-pipeline:
 	colcon build --packages-select main-pipeline --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD)
 
 lane-detection:
-	colcon build --packages-select lane-detection --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD)
+	colcon build --packages-select lane-detection --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD) -DENABLE_RASPBERY_BUILD=$(ENABLE_RASPBERY_BUILD)
 
 manual-control:
 	colcon build --packages-select manual-control --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD)
