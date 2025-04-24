@@ -42,8 +42,12 @@ ament_target_dependencies(${PROJECT_NAME} common)
 
 ament_export_include_directories(include)
 
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
-
+if (ENABLE_RASPBERY_BUILD)
+	target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} -llccv)
+else()
+	target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+endif()
+  
 install(
   DIRECTORY include/${PROJECT_NAME}
   DESTINATION include
@@ -81,11 +85,7 @@ if(ENABLE_TESTS)
                              $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                              $<INSTALL_INTERFACE:include>
   )
-  if (ENABLE_RASPBERY_BUILD)
-    target_link_libraries(${PROJECT_NAME}_module_tests ${OpenCV_LIBS} -llccv)
-  else()
-    target_link_libraries(${PROJECT_NAME}_module_tests ${OpenCV_LIBS})
-  endif()
+  target_link_libraries(${PROJECT_NAME}_module_tests ${OpenCV_LIBS})
 
 endif()
 

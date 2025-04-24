@@ -9,10 +9,11 @@ LaneDetection::LaneDetection(std::shared_ptr<IPubSubNode> pub_sub_node)
 
 void LaneDetection::process_frame(cv::Mat frame) {
     auto status = impl_.detect_lane(std::move(frame));
+    std::cout << status.direction << std::endl;
 
     auto mv = pub_sub_node_->get_subscription_msg();
     // TODO: do we need to correct acceleration field
-    // mv.acceleration = 1.0;
+    mv.acceleration = 1.0;
     mv.steering = status.steer_angle;
 
     pub_sub_node_->publish_msg(std::move(mv));

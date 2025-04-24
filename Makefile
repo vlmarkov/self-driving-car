@@ -10,7 +10,7 @@ ENABLE_COMPILER_OPTIONS    := ON
 ENABLE_LATEST_CPP_STANDARD := ON
 # To debug purpose on your laptop (NOT Raspberry board) you can disable gpio write feature
 ENABLE_WIRING_PI_LIB       := ON
-ENABLE_RASPBERY_BUILD      := OFF
+ENABLE_RASPBERY_BUILD      := ON
 
 all: interfaces common lane-detection manual-control obstacle-avoidance path-planning motion-calibration main-pipeline arduino-code
 

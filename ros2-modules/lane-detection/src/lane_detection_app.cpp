@@ -10,32 +10,37 @@ int test_raspbery_camera() {
     uint32_t num_cams = LibcameraApp::GetNumberCameras();
     std::cout << "Found " << num_cams << " cameras." << std::endl;
 
-    uint32_t height = 720;
-    uint32_t width = 1280;
+    uint32_t height = 1232;
+    uint32_t width = 1640;
 
     std::cout << "Sample program for LCCV video capture" << std::endl;
     std::cout << "Press ESC to stop." << std::endl;
 
-    cv::Mat image = cv::Mat(height, width, CV_8UC3);
+    cv::Mat image = cv::Mat(0, 0, CV_8UC3);
     lccv::PiCamera cam;
-    cam.options->video_width=width;
-    cam.options->video_height=height;
+    cam.options->video_width = 1640;
+    cam.options->video_height = 1232;
+    //cam.options->roi_x = 0;
+    //cam.options->roi_y = 0;
+    //cam.options->roi_width = 1920;
+    //cam.options->roi_height = 1080;
     cam.options->framerate=30;
     cam.options->verbose=true;
     cam.startVideo();
+    //cam.ApplyZoomOptions();
 
     int ch = 0;
     LaneDetectionModule lm({});
 
     while (ch != 27) {
-        if (!cam.getVideoFrame(image,1000)) {
+        if (!cam.getVideoFrame(image, 1000)) {
             std::cout<<"Timeout error"<<std::endl;
         } else {
-            auto frame = image;
-            auto status = lm.detect_lane(std::move(frame));
+            auto status = lm.detect_lane(image);
             cv::imshow("Lane Detection Status", status.frame);
-            std::cout << status.direction << std::endl;
-            std::cout << status.steer_angle << std::endl;
+            //cv::imshow("Lane Detection Status", image);
+            //std::cout << status.direction << std::endl;
+            //std::cout << status.steer_angle << std::endl;
         }
 
         ch = cv::waitKey(5);

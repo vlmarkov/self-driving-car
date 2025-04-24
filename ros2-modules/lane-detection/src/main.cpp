@@ -2,18 +2,39 @@
 
 #include <thread>
 
+#include <opencv2/opencv.hpp>
+
+#ifdef ENABLE_RASPBERY_BUILD
+
+#include <lccv.hpp>
+#include <libcamera_app.hpp>
+
+#endif // ENABLE_RASPBERY_BUILD
+
 using namespace std::chrono_literals;
 
 void run(std::stop_token stop_token, std::shared_ptr<LaneDetection> ld) {
-    // TODO: add here actual work with camera
+#ifdef ENABLE_RASPBERY_BUILD
+    lccv::PiCamera cam;
+    cam.options->video_width = 1640;
+    cam.options->video_height = 1232;
+    cam.options->framerate=30;
+    cam.options->verbose=true;
+    cam.startVideo();
+
+    cv::Mat frame = cv::Mat(0, 0, CV_8UC3);
 
     while(!stop_token.stop_requested()) {
-        auto frame = cv::imread("left_turn.jpg", cv::IMREAD_UNCHANGED); // TODO: this is only for test purpose
-        ld->process_frame(std::move(frame));
+        if (!cam.getVideoFrame(frame, 1000)) {
+            std::cerr << "Timeout error" << std::endl;
+            continue;
+        }
 
-        if (cv::waitKey(30) >= 0) // TODO: work with delay
-            break;
+        ld->process_frame(frame);
     }
+
+    cam.stopVideo();
+#endif // ENABLE_RASPBERY_BUILD
 }
 
 int main(int argc, char * argv[])

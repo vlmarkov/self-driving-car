@@ -82,6 +82,8 @@ void LaneDetectionModule::transformPerspective(const cv::Mat& src, cv::Mat& dst,
     invTm = getPerspectiveTransform(end, start);
 
     cv::warpPerspective(src, dst, Tm, cv::Size(w, h));
+    
+    //cv::imshow("dst", dst);
 }
 
 void LaneDetectionModule::extractLanes(const cv::Mat& src, cv::Mat& colorLane, Lane& lane1, Lane& lane2, int curveFlag) {
@@ -461,6 +463,9 @@ LaneDetectionStatus LaneDetectionModule::detect_lane(cv::Mat frame) {
 
     // Step 4: Extract the region of interest
     extractROI(gaussianBlurImage, ROIImage);
+    
+    //cv::imshow("ROIImage", gaussianBlurImage);
+    
 
     // Step 5: Transform perspective
     cv::Mat transformMatrix, invtransformMatrix;
