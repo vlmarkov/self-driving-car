@@ -104,6 +104,17 @@ void LaneDetectionModule::extractLanes(const cv::Mat& src, cv::Mat& colorLane, L
     std::vector<double> histogram;
     cv::reduce(croppedIm, histogram, 0, cv::REDUCE_SUM);
 
+    // This is a very simple check
+    // Can we get a valid histogram to detect the lanes?
+    bool zero_values = false;
+    for (const auto& h : histogram) {
+        if (h == 0)
+            zero_values = true;
+    }
+
+    if (!zero_values)
+        throw std::runtime_error("can't build historgram");
+
     // Split the two vectors for left and right lane
     std::size_t const halfSize = histogram.size() / 2;
     std::vector<double> leftHist(histogram.begin(), histogram.begin() + halfSize);
