@@ -21,14 +21,14 @@ struct LaneDetectionCfg{
     cv::Scalar yellow_max{30, 255, 255};           // A yellow lane max threshold
     int grayscale_min{200};                        // A white lane min threshold
     int grayscale_max{255};                        // A white lane max threshold
-    cv::Point2f roi_upper_left_corner{300, 600};   // A camera/frame calibration point
-    cv::Point2f roi_upper_right_corner{1000, 600}; // A camera/frame calibration point
+    cv::Point2f roi_upper_left_corner{350, 600};   // A camera/frame calibration point
+    cv::Point2f roi_upper_right_corner{1200, 600}; // A camera/frame calibration point
 };
 
 struct LaneDetectionStatus {
     cv::Mat frame;
     std::string direction;
-    double steer_angle;
+    double steer_angle{0.0};
 };
 
 class LaneDetectionModule {

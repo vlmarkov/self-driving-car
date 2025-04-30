@@ -86,6 +86,14 @@ TEST(FunctionalTest, TestImageRight) {
     ASSERT_EQ(status.direction, "Turn right");
 }
 
+TEST(FunctionalTest, TestImageEmpty) {
+    LaneDetectionModule ldm({});
+    cv::Mat frame;
+    auto status = ldm.detect_lane(std::move(frame));
+
+    ASSERT_EQ(status.direction, "");
+}
+
 int main(int argc, char ** argv)
 {
     testing::InitGoogleTest(&argc, argv);

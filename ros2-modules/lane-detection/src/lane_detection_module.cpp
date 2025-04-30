@@ -104,6 +104,17 @@ void LaneDetectionModule::extractLanes(const cv::Mat& src, cv::Mat& colorLane, L
     std::vector<double> histogram;
     cv::reduce(croppedIm, histogram, 0, cv::REDUCE_SUM);
 
+    // This is a very simple check
+    // Can we get a valid histogram to detect the lanes?
+    bool zero_values = false;
+    for (const auto& h : histogram) {
+        if (h == 0)
+            zero_values = true;
+    }
+
+    if (!zero_values)
+        throw std::runtime_error("can't build historgram");
+
     // Split the two vectors for left and right lane
     std::size_t const halfSize = histogram.size() / 2;
     std::vector<double> leftHist(histogram.begin(), histogram.begin() + halfSize);
@@ -182,78 +193,81 @@ void LaneDetectionModule::extractLanes(const cv::Mat& src, cv::Mat& colorLane, L
     // Assign start coordinates
     lane2.setStartCoordinate(cv::Point(maxRightIndex, currentHeight));
     for (int i = 0; i < windowCount; i++) {
-    // Get the top left and bottom right point to make a rectangle
-    int tlX = maxRightIndex - windowWidth / 2;
-    int tlY = currentHeight - windowHeight;
-    int brX = maxRightIndex + windowWidth / 2;
-    int brY = currentHeight;
+        // Get the top left and bottom right point to make a rectangle
+        int tlX = maxRightIndex - windowWidth / 2;
+        int tlY = currentHeight - windowHeight;
+        int brX = maxRightIndex + windowWidth / 2;
+        int brY = currentHeight;
 
-    // boundary checks
-    tlX = (tlX < 0) ? padding : tlX;
-    tlY = (tlY < 0) ? padding : tlY;
+        // boundary checks
+        tlX = (tlX < 0) ? padding : tlX;
+        tlY = (tlY < 0) ? padding : tlY;
 
-    brX = (brX > w) ? bottomWidth : brX;
-    brY = (brY > h) ? bottomHeight : brY;
+        brX = (brX > w) ? bottomWidth : brX;
+        brY = (brY > h) ? bottomHeight : brY;
 
-    cv::Point tl(tlX, tlY);
-    cv::Point br(brX, brY);
+        cv::Point tl(tlX, tlY);
+        cv::Point br(brX, brY);
 
-    cv::rectangle(colorLane, tl, br, cv::Scalar(0, 255, 204), 3);
+        cv::rectangle(colorLane, tl, br, cv::Scalar(0, 255, 204), 3);
 
-    // Create a temporary vector to store the x's for next box
-    std::vector<int> nextX;
-    // Get the location of the white pixels to store in vector
-    int pointFlag = 0;
-    for (int j = tlX; j <= brX; j++) {
-      for (int k = tlY; k <= brY; k++) {
-        if (src.at<uchar>(k, j) > 0) {
-          colorLane.at<cv::Vec3b>(cv::Point(j, k)) = cv::Vec3b(0, 255, 0);
-          if (pointFlag % 10 == 0) {
-            rightLane.push_back(cv::Point(k, j));  // Push as row(y), col(x)
-          }
-          pointFlag++;
-          nextX.push_back(j);
+        // Create a temporary vector to store the x's for next box
+        std::vector<int> nextX;
+
+        // Get the location of the white pixels to store in vector
+        int pointFlag = 0;
+        for (int j = tlX; j <= brX; j++) {
+            for (int k = tlY; k <= brY; k++) {
+                if (src.at<uchar>(k, j) > 0) {
+                    colorLane.at<cv::Vec3b>(cv::Point(j, k)) = cv::Vec3b(0, 255, 0);
+                    if (pointFlag % 10 == 0) {
+                        rightLane.push_back(cv::Point(k, j));  // Push as row(y), col(x)
+                    }
+                    pointFlag++;
+                    nextX.push_back(j);
+                }
+            }
         }
-      }
+
+        // Get the center of the next bounding box
+        if (!nextX.empty()) {
+            maxRightIndex = std::accumulate(nextX.begin(), nextX.end(), 0) / nextX.size();
+        }
+
+        currentHeight = currentHeight - windowHeight;
     }
 
-    // Get the center of the next bounding box
-    if (!nextX.empty()) {
-      maxRightIndex = std::accumulate(nextX.begin(), nextX.end(), 0)
-          / nextX.size();
-    }
-    currentHeight = currentHeight - windowHeight;
-  }
+    // Mat objects for lane parameters
+    cv::Mat leftLaneParams = cv::Mat::zeros(curveFlag + 1, 1, CV_64F);
+    cv::Mat rightLaneParams = cv::Mat::zeros(curveFlag + 1, 1, CV_64F);
 
-  // Mat objects for lane parameters
-  cv::Mat leftLaneParams = cv::Mat::zeros(curveFlag + 1, 1, CV_64F);
-  cv::Mat rightLaneParams = cv::Mat::zeros(curveFlag + 1, 1, CV_64F);
+    // Call the fitpoly function
+    fitPoly(leftLane, leftLaneParams, curveFlag);
+    fitPoly(rightLane, rightLaneParams, curveFlag);
 
-//  std::cout << "Right params: " << rightLane.size() << "Left params: "
-//            << leftLane.size() << std::endl;
+    // Assign to the lane object and set params
+    lane1.setPolyCoeff(leftLaneParams);
+    lane2.setPolyCoeff(rightLaneParams);
 
-  // Call the fitpoly function
-  fitPoly(leftLane, leftLaneParams, curveFlag);
-  fitPoly(rightLane, rightLaneParams, curveFlag);
+    // Assign status
+    lane1.setStatus(true);
+    lane2.setStatus(true);
 
-  // Assign to the lane object and set params
-  lane1.setPolyCoeff(leftLaneParams);
-  lane2.setPolyCoeff(rightLaneParams);
+    // All the plotting part below this line - Not necessary for program working
+    // Create a copy of the input src image for plotting purposes
+    cv::circle(colorLane,
+               cv::Point(maxLeftIndex, bottomHeight),
+               10,
+               cv::Scalar(0, 0, 125),
+               -1
+    );
 
-  // Assign status
-  lane1.setStatus(true);
-  lane2.setStatus(true);
-
-  /* All the plotting part below this line - Not necessary for program working
-   * Create a copy of the input src image for plotting purposes
-   */
-  cv::circle(colorLane, cv::Point(maxLeftIndex, bottomHeight), 10,
-             cv::Scalar(0, 0, 125), -1);
-
-  cv::circle(colorLane, cv::Point(maxRightIndex, bottomHeight), 10,
-             cv::Scalar(0, 0, 125), -1);
-
-//  cv::imshow("Lane center", colorLane);
+    cv::circle(colorLane,
+               cv::Point(maxRightIndex, bottomHeight),
+               10,
+               cv::Scalar(0, 0, 125),
+               -1
+    );
 }
 
 void LaneDetectionModule::fitPoly(const std::vector<cv::Point>& src, cv::Mat& dst, int order) {
@@ -421,11 +435,7 @@ LaneDetectionStatus LaneDetectionModule::displayOutput(const cv::Mat& src, cv::M
 
 LaneDetectionStatus LaneDetectionModule::detect_lane(cv::Mat frame) {
     if (frame.empty()) {
-        return {
-            .frame = {},
-            .direction = "unknown",
-            .steer_angle = 360.0
-        };
+        return {};
     }
 
     Lane leftLane(2, "red", 10), rightLane(2, "green", 10);
@@ -434,49 +444,53 @@ LaneDetectionStatus LaneDetectionModule::detect_lane(cv::Mat frame) {
         distColor, gaussianBlurImage, ROIImage, warpedImage, undistortedImage,
         laneColor, finalOutput;
 
-    // Step 1: Undistort the input image given camera params
-    undistortImage(frame, undistortedImage);
+    try {            
+        // Step 1: Undistort the input image given camera params
+        undistortImage(frame, undistortedImage);
 
-    // Step 2: Get white lane
-    thresholdImageW(undistortedImage, whiteThreshold);
+        // Step 2: Get white lane
+        thresholdImageW(undistortedImage, whiteThreshold);
 
-    // Step 2: Get Yellow lane
-    thresholdImageY(undistortedImage, yellowThreshold);
+        // Step 3: Get Yellow lane
+        thresholdImageY(undistortedImage, yellowThreshold);
 
-    // Step 2: Combine both the masks
-    bitwise_or(whiteThreshold, yellowThreshold, combinedThreshold);
+        // Step 4: Combine both the masks
+        bitwise_or(whiteThreshold, yellowThreshold, combinedThreshold);
+        combinedThreshold = ~combinedThreshold;
 
-    combinedThreshold = ~combinedThreshold;
+        // Combine mask with grayscale image. Do we need this?
+        cv::Mat grayscaleImage, grayscaleMask;
+        cv::cvtColor(undistortedImage, grayscaleImage, cv::COLOR_BGR2GRAY);
+        grayscaleImage = ~grayscaleImage;
 
-    // Combine mask with grayscale image. Do we need this?
-    cv::Mat grayscaleImage, grayscaleMask;
-    cv::cvtColor(undistortedImage, grayscaleImage, cv::COLOR_BGR2GRAY);
+        bitwise_and(grayscaleImage, combinedThreshold, grayscaleMask);
 
-    grayscaleImage = ~grayscaleImage;
+        // Step 5: Apply Gaussian filter to smooth thresholded image
+        cv::GaussianBlur(combinedThreshold, gaussianBlurImage, cv::Size(5, 5), 0, 0);
 
-    bitwise_and(grayscaleImage, combinedThreshold, grayscaleMask);
+        // Step 6: Extract the region of interest
+        extractROI(gaussianBlurImage, ROIImage);   
 
-    // Step 3: Apply Gaussian filter to smooth thresholded image
-    cv::GaussianBlur(combinedThreshold, gaussianBlurImage, cv::Size(5, 5), 0, 0);
+        // Step 7: Transform perspective
+        cv::Mat transformMatrix, invtransformMatrix;
+        transformPerspective(ROIImage, warpedImage, transformMatrix, invtransformMatrix);
 
-    // Step 4: Extract the region of interest
-    extractROI(gaussianBlurImage, ROIImage);
+        // Step 8: Get the lane parameters
+        // curveFlag = 1: Straight Line
+        // curveFlag = 2: 2nd order polynomial fit
+        extractLanes(warpedImage, laneColor, leftLane, rightLane, 2);
 
-    // Step 5: Transform perspective
-    cv::Mat transformMatrix, invtransformMatrix;
-    transformPerspective(ROIImage, warpedImage, transformMatrix, invtransformMatrix);
+        // Adding inverse transform to show in final video
+        cv::Mat unwarpedOutput;
+        cv::warpPerspective(laneColor, unwarpedOutput, invtransformMatrix, cv::Size(1280, 720));
 
-    // Step 6: Get the lane parameters
-    // curveFlag = 1: Straight Line
-    // curveFlag = 2: 2nd order polynomial fit
-    extractLanes(warpedImage, laneColor, leftLane, rightLane, 2);
+        // Step 9: Display the output
+        return displayOutput(laneColor, frame, finalOutput, leftLane, rightLane, invtransformMatrix);
+    } catch (...) {
+        std::cerr << "can't detect the lanes" << std::endl;
+    }
 
-    // Adding inverse transform to show in final video
-    cv::Mat unwarpedOutput;
-    cv::warpPerspective(laneColor, unwarpedOutput, invtransformMatrix, cv::Size(1280, 720));
-
-    // Step 7: Display the output
-    return displayOutput(laneColor, frame, finalOutput, leftLane, rightLane, invtransformMatrix);
+    return {};
 }
 
 cv::Scalar LaneDetectionModule::getYellowMax() {

@@ -4,19 +4,25 @@ project(lane-detection)
 option(ENABLE_TESTS "Enable tests" OFF)
 option(ENABLE_COMPILER_OPTIONS "Enable advanced complier options/warnings" OFF)
 option(ENABLE_LATEST_CPP_STANDARD "Enable latest c++ standard" OFF)
-option(ENABLE_RASPBERY_BUILD "Enable respberry build" OFF)
+option(ENABLE_RASPBERRY_BUILD "Enable raspberry build" OFF)
+option(ENABLE_RASPBERRY_DEBUG_IMG "Enable raspberry debug image" OFF)
 
 message(STATUS "Enable tests - " ${ENABLE_TESTS})
 message(STATUS "Enable advanced complier options/warnings - " ${ENABLE_COMPILER_OPTIONS})
 message(STATUS "Enable latest C++ standard - " ${ENABLE_LATEST_CPP_STANDARD})
-message(STATUS "Enable respberry build - " ${ENABLE_RASPBERY_BUILD})
+message(STATUS "Enable raspberry build - " ${ENABLE_RASPBERRY_BUILD})
+message(STATUS "Enable raspberry debug image - " ${ENABLE_RASPBERRY_DEBUG_IMG})
 
 if (ENABLE_COMPILER_OPTIONS)
     add_compile_options(-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual -Wpedantic -Wconversion -Wsign-conversion -Wmisleading-indentation -Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wnull-dereference -Wuseless-cast -Wdouble-promotion -Wformat=2 -Wimplicit-fallthrough)
 endif()
 
-if (ENABLE_RASPBERY_BUILD)
-  add_compile_options(-DENABLE_RASPBERY_BUILD)
+if (ENABLE_RASPBERRY_BUILD)
+  add_compile_options(-DENABLE_RASPBERRY_BUILD)
+endif()
+
+if (ENABLE_RASPBERRY_DEBUG_IMG)
+  add_compile_options(-DENABLE_RASPBERRY_DEBUG_IMG)
 endif()
 
 if (ENABLE_LATEST_CPP_STANDARD)
@@ -42,8 +48,12 @@ ament_target_dependencies(${PROJECT_NAME} common)
 
 ament_export_include_directories(include)
 
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
-
+if (ENABLE_RASPBERRY_BUILD)
+	target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} -llccv)
+else()
+	target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+endif()
+  
 install(
   DIRECTORY include/${PROJECT_NAME}
   DESTINATION include
@@ -81,11 +91,7 @@ if(ENABLE_TESTS)
                              $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                              $<INSTALL_INTERFACE:include>
   )
-  if (ENABLE_RASPBERY_BUILD)
-    target_link_libraries(${PROJECT_NAME}_module_tests ${OpenCV_LIBS} -llccv)
-  else()
-    target_link_libraries(${PROJECT_NAME}_module_tests ${OpenCV_LIBS})
-  endif()
+  target_link_libraries(${PROJECT_NAME}_module_tests ${OpenCV_LIBS})
 
 endif()
 
@@ -96,7 +102,7 @@ add_executable(${PROJECT_NAME}-app
                src/lane.cpp
                src/lane_detection_module.cpp
 )
-if (ENABLE_RASPBERY_BUILD)
+if (ENABLE_RASPBERRY_BUILD)
   TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS} -llccv)
 else()
   TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS})
