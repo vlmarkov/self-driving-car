@@ -27,7 +27,10 @@ void MotionCalibration::process_motion_vector() {
     const auto digital_values = convert_to_digital_values(mv.acceleration, mv.steering);
 
     for (const auto& dv : digital_values) {
-        pub_sub_node_->log(fmt::format("{} command", dv.command.c_str()));
+        if (prev_cmd != dv.command) {
+            pub_sub_node_->log(fmt::format("{} command", dv.command.c_str()));
+            prev_cmd = dv.command;
+        }
 
 #ifdef WIRING_PI_LIB
         digitalWrite(FORWARD_PIN, dv.forward);

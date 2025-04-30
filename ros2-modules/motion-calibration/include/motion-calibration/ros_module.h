@@ -14,4 +14,5 @@ public:
 
 private:
     std::shared_ptr<IPubSubNode> pub_sub_node_;
+    std::string prev_cmd;
 };

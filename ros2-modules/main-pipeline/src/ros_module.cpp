@@ -11,7 +11,7 @@ using namespace std::chrono_literals;
 
 namespace {
 
-constexpr auto DEFAULT_TICK_TIMEOUT = 1000ms;
+constexpr auto DEFAULT_TICK_TIMEOUT = 50ms;
 
 } // namespace
 

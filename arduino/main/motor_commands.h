@@ -16,7 +16,7 @@ constexpr auto TURN_PWM = 150;
 /* 25 ms 150 pwm 3-5 degree 12v                                              */
 /*****************************************************************************/
 
-constexpr auto DEFAULT_PWM = 85;
+constexpr auto DEFAULT_PWM = 62;
 constexpr auto HIGH_SIGNAL = true;
 constexpr auto LOW_SIGNAL = false;
 

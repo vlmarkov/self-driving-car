@@ -23,7 +23,7 @@ void LaneDetection::process_frame(cv::Mat frame) {
     } else {
         // TODO: do we need to correct acceleration field
         mv.acceleration = 1.0;
-        mv.steering = status.steer_angle;        
+        mv.steering = status.steer_angle;
     }
 
     pub_sub_node_->publish_msg(std::move(mv));
