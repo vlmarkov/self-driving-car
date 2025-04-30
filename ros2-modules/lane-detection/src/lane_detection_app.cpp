@@ -1,12 +1,12 @@
 #include <lane-detection/lane_detection_module.h>
 
-#ifdef ENABLE_RASPBERY_BUILD
+#ifdef ENABLE_RASPBERRY_BUILD
 
 #include <lccv.hpp>
 #include <libcamera_app.hpp>
 #include <opencv2/opencv.hpp>
 
-int test_raspbery_camera() {
+void test_raspberry_camera() {
     uint32_t num_cams = LibcameraApp::GetNumberCameras();
     std::cout << "Found " << num_cams << " cameras." << std::endl;
 
@@ -20,27 +20,23 @@ int test_raspbery_camera() {
     lccv::PiCamera cam;
     cam.options->video_width = 1640;
     cam.options->video_height = 1232;
-    //cam.options->roi_x = 0;
-    //cam.options->roi_y = 0;
-    //cam.options->roi_width = 1920;
-    //cam.options->roi_height = 1080;
     cam.options->framerate=30;
     cam.options->verbose=true;
     cam.startVideo();
-    //cam.ApplyZoomOptions();
 
     int ch = 0;
     LaneDetectionModule lm({});
 
     while (ch != 27) {
         if (!cam.getVideoFrame(image, 1000)) {
-            std::cout<<"Timeout error"<<std::endl;
+            std::cerr << "can't get image, timeout happend" << std::endl;
         } else {
             auto status = lm.detect_lane(image);
+#ifdef ENABLE_RASPBERRY_DEBUG_IMG
             cv::imshow("Lane Detection Status", status.frame);
-            //cv::imshow("Lane Detection Status", image);
-            //std::cout << status.direction << std::endl;
-            //std::cout << status.steer_angle << std::endl;
+#endif // ENABLE_RASPBERRY_DEBUG_IMG
+            std::cout << status.direction << std::endl;
+            std::cout << status.steer_angle << std::endl;
         }
 
         ch = cv::waitKey(5);
@@ -50,32 +46,38 @@ int test_raspbery_camera() {
     cv::destroyAllWindows();
 }
 
-#endif // ENABLE_RASPBERY_BUILD
+#endif // ENABLE_RASPBERRY_BUILD
 
-int test_static_image(int argc, char* argv[]) {
+void test_static_image(int argc, char* argv[]) {
     auto frame = cv::imread(argv[1], cv::IMREAD_UNCHANGED);
     if (frame.empty()) {
-        return -1;
+        return;
     }
 
-    LaneDetectionModule lm({});
-    auto status = lm.detect_lane(std::move(frame));
+    try {
+        LaneDetectionModule lm({});
+        auto status = lm.detect_lane(std::move(frame));
 
-    cv::imshow("Lane Detection Status", status.frame);
-    std::cout << status.direction << std::endl;
-    std::cout << status.steer_angle << std::endl;
+        cv::imshow("Lane Detection Status", status.frame);
+        std::cout << status.direction << std::endl;
+        std::cout << status.steer_angle << std::endl;
 
-    if (cv::waitKey(3000) >= 0) {
-        return 0;
+        if (cv::waitKey(3000) >= 0) {
+            return;
+        }
+    } catch (...) {
+        std::cerr << "can not process image" << std::endl;
     }
+
+    return;
 }
 
 int main(int argc, char* argv[]) {
-#ifdef ENABLE_RASPBERY_BUILD
-    test_raspbery_camera();
-#endif // ENABLE_RASPBERY_BUILD
-
+#ifdef ENABLE_RASPBERRY_BUILD
+    test_raspberry_camera();
+#else
     test_static_image(argc, argv);
+#endif // ENABLE_RASPBERRY_BUILD   
 
     return 0;
 }

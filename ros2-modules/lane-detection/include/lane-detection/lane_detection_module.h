@@ -28,7 +28,7 @@ struct LaneDetectionCfg{
 struct LaneDetectionStatus {
     cv::Mat frame;
     std::string direction;
-    double steer_angle;
+    double steer_angle{0.0};
 };
 
 class LaneDetectionModule {

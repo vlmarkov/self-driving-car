@@ -4,17 +4,17 @@
 
 #include <opencv2/opencv.hpp>
 
-#ifdef ENABLE_RASPBERY_BUILD
+#ifdef ENABLE_RASPBERRY_BUILD
 
 #include <lccv.hpp>
 #include <libcamera_app.hpp>
 
-#endif // ENABLE_RASPBERY_BUILD
+#endif // ENABLE_RASPBERRY_BUILD
 
 using namespace std::chrono_literals;
 
 void run(std::stop_token stop_token, std::shared_ptr<LaneDetection> ld) {
-#ifdef ENABLE_RASPBERY_BUILD
+#ifdef ENABLE_RASPBERRY_BUILD
     lccv::PiCamera cam;
     cam.options->video_width = 1640;
     cam.options->video_height = 1232;
@@ -26,7 +26,7 @@ void run(std::stop_token stop_token, std::shared_ptr<LaneDetection> ld) {
 
     while(!stop_token.stop_requested()) {
         if (!cam.getVideoFrame(frame, 1000)) {
-            std::cerr << "Timeout error" << std::endl;
+            std::cerr << "can't get image, timeout happend" << std::endl;
             continue;
         }
 
@@ -34,7 +34,7 @@ void run(std::stop_token stop_token, std::shared_ptr<LaneDetection> ld) {
     }
 
     cam.stopVideo();
-#endif // ENABLE_RASPBERY_BUILD
+#endif // ENABLE_RASPBERRY_BUILD
 }
 
 int main(int argc, char * argv[])
