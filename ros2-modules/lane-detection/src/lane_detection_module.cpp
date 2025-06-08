@@ -469,7 +469,7 @@ LaneDetectionStatus LaneDetectionModule::detect_lane(cv::Mat frame) {
         cv::GaussianBlur(combinedThreshold, gaussianBlurImage, cv::Size(5, 5), 0, 0);
 
         // Step 6: Extract the region of interest
-        extractROI(gaussianBlurImage, ROIImage);   
+        extractROI(gaussianBlurImage, ROIImage);
 
         // Step 7: Transform perspective
         cv::Mat transformMatrix, invtransformMatrix;

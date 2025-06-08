@@ -10,16 +10,13 @@ void test_raspberry_camera() {
     uint32_t num_cams = LibcameraApp::GetNumberCameras();
     std::cout << "Found " << num_cams << " cameras." << std::endl;
 
-    uint32_t height = 1232;
-    uint32_t width = 1640;
-
     std::cout << "Sample program for LCCV video capture" << std::endl;
     std::cout << "Press ESC to stop." << std::endl;
 
     cv::Mat image = cv::Mat(0, 0, CV_8UC3);
     lccv::PiCamera cam;
-    cam.options->video_width = 1640;
-    cam.options->video_height = 1232;
+    cam.options->video_width = 640;
+    cam.options->video_height = 480;
     cam.options->framerate=30;
     cam.options->verbose=true;
     cam.startVideo();
