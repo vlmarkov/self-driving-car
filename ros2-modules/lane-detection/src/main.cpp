@@ -16,8 +16,8 @@ using namespace std::chrono_literals;
 void run(std::stop_token stop_token, std::shared_ptr<LaneDetection> ld) {
 #ifdef ENABLE_RASPBERRY_BUILD
     lccv::PiCamera cam;
-    cam.options->video_width = 1640;
-    cam.options->video_height = 1232;
+    cam.options->video_width = 640;
+    cam.options->video_height = 480;
     cam.options->framerate=30;
     cam.options->verbose=true;
     cam.startVideo();
