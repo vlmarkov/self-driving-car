@@ -21,7 +21,3 @@ TEST(MotorCommandsTest, ComplexCurveMotion) {
     auto motor_commands = planner.do_plan(acceleration, steering);
 }
 
-int main(int argc, char ** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
