@@ -6,7 +6,7 @@ TEST(MotorCommandsTest, ComplexCurveMotion) {
     double acceleration = 0.0;
     double steering = 0.0;
 
-    MotionPlaner planner(State::STOP, Direction::NONE);
+    MotionPlanner planner(State::STOP, Direction::NONE);
     
     // stop
     // forward

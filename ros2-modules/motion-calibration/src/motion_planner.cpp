@@ -80,107 +80,123 @@ Direction steering2direction(double steering)
     return Direction::NONE;
 }
 
-/*
-NONE -> NONE -> STOP
-FORWARD -> FORWARD -> MAINTAIN_SPEED
-BACKWARD -> BACKWARD -> MAINTAIN_SPEED
-LEFT -> LEFT -> MAINTAIN_SPEED
-RIGHT -> RIGHT -> MAINTAIN_SPEED
-
-NONE -> FORWARD -> INCREASE_SPEED
-NONE -> BACKWARD -> INCREASE_SPEED
-NONE -> LEFT -> INCREASE_SPEED
-NONE -> RIGHT -> INCREASE_SPEED
-
-FORWARD -> BACKWARD -> DECREASE_SPEED
-FORWARD -> LEFT -> DECREASE_SPEED
-FORWARD -> RIGHT -> DECREASE_SPEED
-
-BACKWARD -> FORWARD -> DECREASE_SPEED
-BACKWARD -> LEFT -> DECREASE_SPEED
-BACKWARD -> RIGHT -> DECREASE_SPEED
-
-LEFT -> FORWARD -> DECREASE_SPEED
-LEFT -> BACKWARD -> DECREASE_SPEED
-LEFT -> RIGHT -> DECREASE_SPEED
-
-RIGHT -> FORWARD -> DECREASE_SPEED
-RIGHT -> BACKWARD -> DECREASE_SPEED
-RIGHT -> LEFT -> DECREASE_SPEED
-
-
-DECREASE_SPEED ? -> STOP
-INCREASE_SPEED ? -> MAINTAIN_SPEED
-
-*/
-
-State transit_state(Direction prev_dir, Direction new_dir, State prev_state, uint8_t& counter) {
-    if (prev_dir != new_dir) {
-        if (prev_dir == Direction::NONE) {
-            return State::INCREASE_SPEED;
-        }
-        return State::DECREASE_SPEED;
-    }
-
-    if (prev_dir == Direction::NONE) {
-        counter = 0;
-        return State::STOP;
-    }
-
-    if (counter == 10) {
-        counter = 0;
-        if (prev_state == State::INCREASE_SPEED)
-            return State::MAINTAIN_SPEED;
-        return State::STOP;
-    }
-
-    return prev_state;
-}
-
 } // namespace
 
-MotionPlaner::MotionPlaner(State initial_state, Direction initial_direction)
-    : state_(initial_state)
-    , direction_(initial_direction)
-{}
+MotionPlanner::MotionPlanner(State initial_state, Direction initial_direction)
+    : current_state_(initial_state)
+    , current_direction_(initial_direction)
+{
+    transitions_ = {
+        // From Stop state
+        {State::STOP, Direction::NONE, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::INCREASE_SPEED},
 
-MotorCommands MotionPlaner::do_plan(double acceleration, double steering)
+        // From INCREASE_SPEED state
+        {State::INCREASE_SPEED, Direction::FORWARD, {Direction::FORWARD}, State::MAINTAIN_SPEED},
+        {State::INCREASE_SPEED, Direction::BACKWARD, {Direction::BACKWARD}, State::MAINTAIN_SPEED},
+        {State::INCREASE_SPEED, Direction::LEFT, {Direction::LEFT}, State::MAINTAIN_SPEED},
+        {State::INCREASE_SPEED, Direction::RIGHT, {Direction::RIGHT}, State::MAINTAIN_SPEED},
+
+        {State::INCREASE_SPEED, Direction::FORWARD, {Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::DECREASE_SPEED},
+        {State::INCREASE_SPEED, Direction::BACKWARD, {Direction::FORWARD, Direction::LEFT, Direction::RIGHT}, State::DECREASE_SPEED},
+        {State::INCREASE_SPEED, Direction::LEFT, {Direction::FORWARD, Direction::BACKWARD, Direction::RIGHT}, State::DECREASE_SPEED},
+        {State::INCREASE_SPEED, Direction::RIGHT, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT}, State::DECREASE_SPEED},
+
+        // From MAINTAIN_SPEED state
+        {State::MAINTAIN_SPEED, Direction::FORWARD, {Direction::FORWARD}, State::MAINTAIN_SPEED},
+        {State::MAINTAIN_SPEED, Direction::BACKWARD, {Direction::BACKWARD}, State::MAINTAIN_SPEED},
+        {State::MAINTAIN_SPEED, Direction::LEFT, {Direction::LEFT}, State::MAINTAIN_SPEED},
+        {State::MAINTAIN_SPEED, Direction::RIGHT, {Direction::RIGHT}, State::MAINTAIN_SPEED},
+
+        {State::MAINTAIN_SPEED, Direction::FORWARD, {Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::DECREASE_SPEED},
+        {State::MAINTAIN_SPEED, Direction::BACKWARD, {Direction::FORWARD, Direction::LEFT, Direction::RIGHT}, State::DECREASE_SPEED},
+        {State::MAINTAIN_SPEED, Direction::LEFT, {Direction::FORWARD, Direction::BACKWARD, Direction::RIGHT}, State::DECREASE_SPEED},
+        {State::MAINTAIN_SPEED, Direction::RIGHT, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT}, State::DECREASE_SPEED},
+
+        // From Decreasing state
+        {State::DECREASE_SPEED, Direction::FORWARD, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::STOP},
+        {State::DECREASE_SPEED, Direction::BACKWARD, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::STOP},
+        {State::DECREASE_SPEED, Direction::LEFT, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::STOP},
+        {State::DECREASE_SPEED, Direction::RIGHT, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::STOP},
+    };
+}
+
+MotorCommands MotionPlanner::do_plan(double acceleration, double steering)
 {
     // TODO: what about forward+left, forward+right complex command?
-    auto new_direction = acceleration2direction(acceleration);
+    auto next_direction = acceleration2direction(acceleration);
     if (steering != 0.0)
-        new_direction = steering2direction(steering);
-
-    state_ = transit_state(direction_, new_direction, state_, counter);
-    if (direction_ == Direction::NONE)
-        direction_ = new_direction;
-
-    if (state_ == State::STOP) {
-        direction_ = Direction::NONE;
-        return {};
-    }
+        next_direction = steering2direction(steering);
+    
+    do_transition(next_direction);
 
     MotorCommands mc;
-    if (direction_ == Direction::FORWARD)
-        mc = foward_command();
-    if (direction_ == Direction::BACKWARD)
-        mc = backward_command();
-    if (direction_ == Direction::LEFT)
-        mc = left_command();
-    if (direction_ == Direction::RIGHT)
-        mc = right_command();
-
-    if (state_ == State::INCREASE_SPEED) {
-        counter += 1;
-        mc.engine_left_pwm += (10 * counter);
-        mc.engine_right_pwm += (10 * counter);
+    switch (current_direction_)
+    {
+        case Direction::FORWARD:
+            mc = foward_command();
+            break;
+        case Direction::BACKWARD:
+            mc = backward_command();
+            break;
+        case Direction::LEFT:
+            mc = left_command();
+            break;
+        case Direction::RIGHT:
+            mc = right_command();
+            break;
+        default:
+            break;
     }
 
-    if (state_ == State::DECREASE_SPEED) {
-        counter += 1;
-        mc.engine_left_pwm -= (10 * counter);
-        mc.engine_right_pwm -= (10 * counter);
+    if (current_state_ == State::INCREASE_SPEED) {
+        mc.engine_left_pwm += (max_counter_ * (counter_ - 1));
+        mc.engine_right_pwm += (max_counter_ * (counter_ - 1));
+    }
+
+    if (current_state_ == State::DECREASE_SPEED) {
+        mc.engine_left_pwm -= (max_counter_ * (counter_ + 1));
+        mc.engine_right_pwm -= (max_counter_ * (counter_ + 1));
     }
 
     return mc;
+}
+
+void MotionPlanner::do_transition(Direction next_direction)
+{
+    for (const auto& t : transitions_) {
+        if (t.current_state == current_state_ &&
+            t.current_direction == current_direction_ &&
+            t.next_directions.contains(next_direction))
+        {
+            if (current_state_ == State::INCREASE_SPEED && t.next_state == State::MAINTAIN_SPEED) {
+                counter_ += 1;
+                if (counter_ == max_counter_) {
+                    current_state_ = State::MAINTAIN_SPEED;
+                }
+                return;
+            }
+
+            if (current_state_ == State::INCREASE_SPEED && t.next_state == State::DECREASE_SPEED) {
+                current_state_ = State::DECREASE_SPEED;
+                return;
+            }
+
+            if (current_state_ == State::MAINTAIN_SPEED && t.next_state == State::DECREASE_SPEED) {
+                current_state_ = State::DECREASE_SPEED;
+                return;
+            }
+
+            if (current_state_ == State::DECREASE_SPEED && t.next_state == State::STOP) {
+                counter_ -= 1;
+                if (counter_ == 0) {
+                    current_state_ = State::STOP;
+                    current_direction_ = Direction::NONE;
+                }
+                return;
+            }
+
+            current_state_ = t.next_state;
+            current_direction_ = next_direction;
+        }
+    }
 }
