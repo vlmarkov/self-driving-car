@@ -2,38 +2,13 @@
 
 #include <gtest/gtest.h>
 
-TEST(BackwardMotorCommandsTest, StopToBackward) {
+TEST(BackwardMotorCommandsTest, FromStopToBackwardExpectIncrease) {
     double acceleration = -1.0;
     double steering = 0.0;
 
     MotionPlanner planner(State::STOP, Direction::NONE);
 
     auto mc = planner.do_plan(acceleration, steering);
-
-    ASSERT_EQ(mc.engine_left_forward, HIGH_SIGNAL);
-    ASSERT_EQ(mc.engine_left_reverse, LOW_SIGNAL);
-    ASSERT_EQ(mc.engine_right_forward, HIGH_SIGNAL);
-    ASSERT_EQ(mc.engine_right_reverse, LOW_SIGNAL);
-    ASSERT_EQ(mc.engine_left_pwm, DEFAULT_PWM);
-    ASSERT_EQ(mc.engine_right_pwm, DEFAULT_PWM);
-}
-
-TEST(BackwardMotorCommandsTest, StopToBackwardIncrease) {
-    double acceleration = -1.0;
-    double steering = 0.0;
-
-    MotionPlanner planner(State::STOP, Direction::NONE);
-
-    auto mc = planner.do_plan(acceleration, steering);
-
-    ASSERT_EQ(mc.engine_left_forward, HIGH_SIGNAL);
-    ASSERT_EQ(mc.engine_left_reverse, LOW_SIGNAL);
-    ASSERT_EQ(mc.engine_right_forward, HIGH_SIGNAL);
-    ASSERT_EQ(mc.engine_right_reverse, LOW_SIGNAL);
-    ASSERT_EQ(mc.engine_left_pwm, DEFAULT_PWM);
-    ASSERT_EQ(mc.engine_right_pwm, DEFAULT_PWM);
-
-    mc = planner.do_plan(acceleration, steering);
 
     ASSERT_EQ(mc.engine_left_forward, HIGH_SIGNAL);
     ASSERT_EQ(mc.engine_left_reverse, LOW_SIGNAL);
@@ -41,6 +16,26 @@ TEST(BackwardMotorCommandsTest, StopToBackwardIncrease) {
     ASSERT_EQ(mc.engine_right_reverse, LOW_SIGNAL);
     ASSERT_EQ(mc.engine_left_pwm, DEFAULT_PWM + 10);
     ASSERT_EQ(mc.engine_right_pwm, DEFAULT_PWM + 10);
+}
+
+TEST(BackwardMotorCommandsTest, FromStopToBackwardExpectMaintain) {
+    double acceleration = -1.0;
+    double steering = 0.0;
+
+    MotionPlanner planner(State::STOP, Direction::NONE);
+
+    for (auto i = 0; i < 10; ++i) {
+        planner.do_plan(acceleration, steering);
+    }
+
+    auto mc = planner.do_plan(acceleration, steering);
+
+    ASSERT_EQ(mc.engine_left_forward, HIGH_SIGNAL);
+    ASSERT_EQ(mc.engine_left_reverse, LOW_SIGNAL);
+    ASSERT_EQ(mc.engine_right_forward, HIGH_SIGNAL);
+    ASSERT_EQ(mc.engine_right_reverse, LOW_SIGNAL);
+    ASSERT_EQ(mc.engine_left_pwm, DEFAULT_PWM + 20);
+    ASSERT_EQ(mc.engine_right_pwm, DEFAULT_PWM + 20);
 }
 
 TEST(BackwardMotorCommandsTest, BackwardToForward) {

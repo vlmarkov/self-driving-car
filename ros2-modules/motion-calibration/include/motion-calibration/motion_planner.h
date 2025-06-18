@@ -14,6 +14,7 @@ struct Transition {
 
     std::unordered_set<Direction> next_directions;
     State next_state;
+    Direction next_direction;
 };
 
 
@@ -24,8 +25,13 @@ public:
     MotorCommands do_plan(double acceleration, double steering);   
 
 private:
-    const uint8_t max_counter_{10};
-    uint8_t counter_{0};
+    const uint8_t pwm_step{10};
+    uint8_t engine_left_pwm = DEFAULT_PWM;
+    uint8_t engine_right_pwm = DEFAULT_PWM;
+
+    const uint8_t max_change_pwm_{3};
+    uint8_t change_pwm_counter_{0};
+
     State current_state_{State::STOP};
     Direction current_direction_{Direction::NONE};
 

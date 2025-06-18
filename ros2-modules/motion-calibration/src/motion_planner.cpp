@@ -1,5 +1,8 @@
 #include <motion-calibration/motion_planner.h>
 
+#include <string>
+#include <iostream>
+
 namespace {
 
 MotorCommands foward_command()
@@ -80,6 +83,29 @@ Direction steering2direction(double steering)
     return Direction::NONE;
 }
 
+std::string to_str(State s) {
+    switch (s)
+    {
+        case State::STOP: return "STOP";
+        case State::DECREASE_SPEED: return "DECREASE_SPEED";
+        case State::INCREASE_SPEED: return "INCREASE_SPEED";
+        case State::MAINTAIN_SPEED: return "MAINTAIN_SPEED";   
+    }
+    return "";
+}
+
+std::string to_str(Direction d) {
+    switch (d)
+    {
+        case Direction::NONE: return "NONE";
+        case Direction::FORWARD: return "FORWARD";
+        case Direction::BACKWARD: return "BACKWARD";
+        case Direction::LEFT: return "LEFT";
+        case Direction::RIGHT: return "RIGHT";
+    }
+    return "";
+}
+
 } // namespace
 
 MotionPlanner::MotionPlanner(State initial_state, Direction initial_direction)
@@ -87,42 +113,45 @@ MotionPlanner::MotionPlanner(State initial_state, Direction initial_direction)
     , current_direction_(initial_direction)
 {
     transitions_ = {
-        // From Stop state
-        {State::STOP, Direction::NONE, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::INCREASE_SPEED},
+        // From STOP state
+        {State::STOP, Direction::NONE, {Direction::FORWARD}, State::INCREASE_SPEED, Direction::FORWARD},
+        {State::STOP, Direction::NONE, {Direction::BACKWARD}, State::INCREASE_SPEED, Direction::BACKWARD},
+        {State::STOP, Direction::NONE, {Direction::LEFT}, State::INCREASE_SPEED, Direction::LEFT},
+        {State::STOP, Direction::NONE, {Direction::RIGHT}, State::INCREASE_SPEED, Direction::RIGHT},
 
         // From INCREASE_SPEED state
-        {State::INCREASE_SPEED, Direction::FORWARD, {Direction::FORWARD}, State::MAINTAIN_SPEED},
-        {State::INCREASE_SPEED, Direction::BACKWARD, {Direction::BACKWARD}, State::MAINTAIN_SPEED},
-        {State::INCREASE_SPEED, Direction::LEFT, {Direction::LEFT}, State::MAINTAIN_SPEED},
-        {State::INCREASE_SPEED, Direction::RIGHT, {Direction::RIGHT}, State::MAINTAIN_SPEED},
+        {State::INCREASE_SPEED, Direction::FORWARD, {Direction::FORWARD}, State::MAINTAIN_SPEED, Direction::FORWARD},
+        {State::INCREASE_SPEED, Direction::BACKWARD, {Direction::BACKWARD}, State::MAINTAIN_SPEED, Direction::BACKWARD},
+        {State::INCREASE_SPEED, Direction::LEFT, {Direction::LEFT}, State::MAINTAIN_SPEED, Direction::LEFT},
+        {State::INCREASE_SPEED, Direction::RIGHT, {Direction::RIGHT}, State::MAINTAIN_SPEED, Direction::RIGHT},
 
-        {State::INCREASE_SPEED, Direction::FORWARD, {Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::DECREASE_SPEED},
-        {State::INCREASE_SPEED, Direction::BACKWARD, {Direction::FORWARD, Direction::LEFT, Direction::RIGHT}, State::DECREASE_SPEED},
-        {State::INCREASE_SPEED, Direction::LEFT, {Direction::FORWARD, Direction::BACKWARD, Direction::RIGHT}, State::DECREASE_SPEED},
-        {State::INCREASE_SPEED, Direction::RIGHT, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT}, State::DECREASE_SPEED},
+        {State::INCREASE_SPEED, Direction::FORWARD, {Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::DECREASE_SPEED, Direction::FORWARD},
+        {State::INCREASE_SPEED, Direction::BACKWARD, {Direction::FORWARD, Direction::LEFT, Direction::RIGHT}, State::DECREASE_SPEED, Direction::BACKWARD},
+        {State::INCREASE_SPEED, Direction::LEFT, {Direction::FORWARD, Direction::BACKWARD, Direction::RIGHT}, State::DECREASE_SPEED, Direction::LEFT},
+        {State::INCREASE_SPEED, Direction::RIGHT, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT}, State::DECREASE_SPEED, Direction::RIGHT},
 
         // From MAINTAIN_SPEED state
-        {State::MAINTAIN_SPEED, Direction::FORWARD, {Direction::FORWARD}, State::MAINTAIN_SPEED},
-        {State::MAINTAIN_SPEED, Direction::BACKWARD, {Direction::BACKWARD}, State::MAINTAIN_SPEED},
-        {State::MAINTAIN_SPEED, Direction::LEFT, {Direction::LEFT}, State::MAINTAIN_SPEED},
-        {State::MAINTAIN_SPEED, Direction::RIGHT, {Direction::RIGHT}, State::MAINTAIN_SPEED},
+        {State::MAINTAIN_SPEED, Direction::FORWARD, {Direction::FORWARD}, State::MAINTAIN_SPEED, Direction::FORWARD},
+        {State::MAINTAIN_SPEED, Direction::BACKWARD, {Direction::BACKWARD}, State::MAINTAIN_SPEED, Direction::BACKWARD},
+        {State::MAINTAIN_SPEED, Direction::LEFT, {Direction::LEFT}, State::MAINTAIN_SPEED, Direction::LEFT},
+        {State::MAINTAIN_SPEED, Direction::RIGHT, {Direction::RIGHT}, State::MAINTAIN_SPEED, Direction::RIGHT},
 
-        {State::MAINTAIN_SPEED, Direction::FORWARD, {Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::DECREASE_SPEED},
-        {State::MAINTAIN_SPEED, Direction::BACKWARD, {Direction::FORWARD, Direction::LEFT, Direction::RIGHT}, State::DECREASE_SPEED},
-        {State::MAINTAIN_SPEED, Direction::LEFT, {Direction::FORWARD, Direction::BACKWARD, Direction::RIGHT}, State::DECREASE_SPEED},
-        {State::MAINTAIN_SPEED, Direction::RIGHT, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT}, State::DECREASE_SPEED},
+        {State::MAINTAIN_SPEED, Direction::FORWARD, {Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::DECREASE_SPEED, Direction::FORWARD},
+        {State::MAINTAIN_SPEED, Direction::BACKWARD, {Direction::FORWARD, Direction::LEFT, Direction::RIGHT}, State::DECREASE_SPEED, Direction::BACKWARD},
+        {State::MAINTAIN_SPEED, Direction::LEFT, {Direction::FORWARD, Direction::BACKWARD, Direction::RIGHT}, State::DECREASE_SPEED, Direction::LEFT},
+        {State::MAINTAIN_SPEED, Direction::RIGHT, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT}, State::DECREASE_SPEED, Direction::RIGHT},
 
-        // From Decreasing state
-        {State::DECREASE_SPEED, Direction::FORWARD, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::STOP},
-        {State::DECREASE_SPEED, Direction::BACKWARD, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::STOP},
-        {State::DECREASE_SPEED, Direction::LEFT, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::STOP},
-        {State::DECREASE_SPEED, Direction::RIGHT, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::STOP},
+        // From DECREASE_SPEED state
+        {State::DECREASE_SPEED, Direction::FORWARD, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::STOP, Direction::NONE},
+        {State::DECREASE_SPEED, Direction::BACKWARD, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::STOP, Direction::NONE},
+        {State::DECREASE_SPEED, Direction::LEFT, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::STOP, Direction::NONE},
+        {State::DECREASE_SPEED, Direction::RIGHT, {Direction::FORWARD, Direction::BACKWARD, Direction::LEFT, Direction::RIGHT}, State::STOP, Direction::NONE},
     };
 }
 
 MotorCommands MotionPlanner::do_plan(double acceleration, double steering)
 {
-    // TODO: what about forward+left, forward+right complex command?
+    // Simple hierachy for line holding procedure
     auto next_direction = acceleration2direction(acceleration);
     if (steering != 0.0)
         next_direction = steering2direction(steering);
@@ -149,14 +178,15 @@ MotorCommands MotionPlanner::do_plan(double acceleration, double steering)
     }
 
     if (current_state_ == State::INCREASE_SPEED) {
-        mc.engine_left_pwm += (max_counter_ * (counter_ - 1));
-        mc.engine_right_pwm += (max_counter_ * (counter_ - 1));
+        engine_left_pwm += pwm_step;
+        engine_right_pwm += pwm_step;
+    } else if (current_state_ == State::DECREASE_SPEED) {
+        engine_left_pwm -= pwm_step;
+        engine_right_pwm -= pwm_step;
     }
 
-    if (current_state_ == State::DECREASE_SPEED) {
-        mc.engine_left_pwm -= (max_counter_ * (counter_ + 1));
-        mc.engine_right_pwm -= (max_counter_ * (counter_ + 1));
-    }
+    mc.engine_left_pwm = engine_left_pwm;
+    mc.engine_right_pwm = engine_right_pwm;
 
     return mc;
 }
@@ -168,35 +198,35 @@ void MotionPlanner::do_transition(Direction next_direction)
             t.current_direction == current_direction_ &&
             t.next_directions.contains(next_direction))
         {
+            //std::cout << "current_state     " << to_str(current_state_) << " next_state " << to_str(t.next_state) << std::endl;
+            //std::cout << "current_direction " << to_str(current_direction_) << " next_direction " << to_str(t.next_direction) << std::endl;
+
+            if (current_state_ == State::INCREASE_SPEED || t.next_state == State::INCREASE_SPEED) {
+                ++change_pwm_counter_;
+            }
             if (current_state_ == State::INCREASE_SPEED && t.next_state == State::MAINTAIN_SPEED) {
-                counter_ += 1;
-                if (counter_ == max_counter_) {
-                    current_state_ = State::MAINTAIN_SPEED;
+                if (change_pwm_counter_ != max_change_pwm_) {
+                    return; // Early exit to prevent transition and complete increase speed command
                 }
-                return;
+                //std::cout << "FULL SPEED" << std::endl;
+                change_pwm_counter_ = 0;
             }
 
-            if (current_state_ == State::INCREASE_SPEED && t.next_state == State::DECREASE_SPEED) {
-                current_state_ = State::DECREASE_SPEED;
-                return;
+            if (current_state_ == State::DECREASE_SPEED || t.next_state == State::DECREASE_SPEED) {
+                ++change_pwm_counter_;
             }
-
-            if (current_state_ == State::MAINTAIN_SPEED && t.next_state == State::DECREASE_SPEED) {
-                current_state_ = State::DECREASE_SPEED;
-                return;
-            }
-
             if (current_state_ == State::DECREASE_SPEED && t.next_state == State::STOP) {
-                counter_ -= 1;
-                if (counter_ == 0) {
-                    current_state_ = State::STOP;
-                    current_direction_ = Direction::NONE;
+                if (change_pwm_counter_ != max_change_pwm_) {
+                    return; // Early exit to prevent transition and complete decrease speed command
                 }
-                return;
+                //std::cout << "FULL STOP" << std::endl;
+                change_pwm_counter_ = 0;
             }
 
             current_state_ = t.next_state;
-            current_direction_ = next_direction;
+            current_direction_ = t.next_direction;
+
+            return;
         }
     }
 }
