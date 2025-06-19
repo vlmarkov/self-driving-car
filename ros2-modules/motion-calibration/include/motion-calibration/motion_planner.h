@@ -20,16 +20,17 @@ struct Transition {
 
 class MotionPlanner {
 public:
-    MotionPlanner(State initial_state, Direction initial_direction);
+    MotionPlanner(State initial_state,
+                  Direction initial_direction,
+                  uint8_t initial_engine_left_pwm,
+                  uint8_t initial_engine_right_pwm,
+                  uint8_t initial_change_pwm_counter);
 
     MotorCommands do_plan(double acceleration, double steering);   
 
 private:
-    const uint8_t pwm_step{10};
-    uint8_t engine_left_pwm = DEFAULT_PWM;
-    uint8_t engine_right_pwm = DEFAULT_PWM;
-
-    const uint8_t max_change_pwm_{3};
+    uint8_t engine_left_pwm_{DEFAULT_PWM};
+    uint8_t engine_right_pwm_{DEFAULT_PWM};
     uint8_t change_pwm_counter_{0};
 
     State current_state_{State::STOP};

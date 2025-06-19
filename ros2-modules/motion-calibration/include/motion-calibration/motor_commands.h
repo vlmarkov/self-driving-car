@@ -5,7 +5,9 @@
 constexpr auto HIGH_SIGNAL = true;
 constexpr auto LOW_SIGNAL = false;
 
-constexpr auto DEFAULT_PWM = 62;
+constexpr auto DEFAULT_PWM = 0;
+constexpr auto PWM_STEP = 10;
+constexpr auto MAX_PWM_STEPS = 7;
 
 struct MotorCommands {
     bool engine_left_forward{LOW_SIGNAL};

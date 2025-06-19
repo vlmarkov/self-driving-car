@@ -6,7 +6,7 @@ TEST(ForwardMotorCommandsTest, FromStopToForwardExpectIncrease) {
     double acceleration = 1.0;
     double steering = 0.0;
 
-    MotionPlanner planner(State::STOP, Direction::NONE);
+    MotionPlanner planner(State::STOP, Direction::NONE, 0, 0, 0);
 
     auto mc = planner.do_plan(acceleration, steering);
 
@@ -14,19 +14,15 @@ TEST(ForwardMotorCommandsTest, FromStopToForwardExpectIncrease) {
     ASSERT_EQ(mc.engine_left_reverse, HIGH_SIGNAL);
     ASSERT_EQ(mc.engine_right_forward, LOW_SIGNAL);
     ASSERT_EQ(mc.engine_right_reverse, HIGH_SIGNAL);
-    ASSERT_EQ(mc.engine_left_pwm, DEFAULT_PWM + 10);
-    ASSERT_EQ(mc.engine_right_pwm, DEFAULT_PWM + 10);
+    ASSERT_EQ(mc.engine_left_pwm, PWM_STEP);
+    ASSERT_EQ(mc.engine_right_pwm, PWM_STEP);
 }
 
-TEST(ForwardMotorCommandsTest, FromStopToForwardExpectMaintain) {
+TEST(ForwardMotorCommandsTest, FromForwardToForwardExpectMaintain) {
     double acceleration = 1.0;
     double steering = 0.0;
 
-    MotionPlanner planner(State::STOP, Direction::NONE);
-
-    for (auto i = 0; i < 10; ++i) {
-        planner.do_plan(acceleration, steering);
-    }
+    MotionPlanner planner(State::MAINTAIN_SPEED, Direction::FORWARD, MAX_PWM_STEPS * PWM_STEP, MAX_PWM_STEPS * PWM_STEP, 0);
 
     auto mc = planner.do_plan(acceleration, steering);
 
@@ -34,31 +30,15 @@ TEST(ForwardMotorCommandsTest, FromStopToForwardExpectMaintain) {
     ASSERT_EQ(mc.engine_left_reverse, HIGH_SIGNAL);
     ASSERT_EQ(mc.engine_right_forward, LOW_SIGNAL);
     ASSERT_EQ(mc.engine_right_reverse, HIGH_SIGNAL);
-    ASSERT_EQ(mc.engine_left_pwm, DEFAULT_PWM + 20);
-    ASSERT_EQ(mc.engine_right_pwm, DEFAULT_PWM + 20);
+    ASSERT_EQ(mc.engine_left_pwm, MAX_PWM_STEPS * PWM_STEP);
+    ASSERT_EQ(mc.engine_right_pwm, MAX_PWM_STEPS * PWM_STEP);
 }
 
-TEST(ForwardMotorCommandsTest, ForwardToForward) {
-    double acceleration = 1.0;
-    double steering = 0.0;
-
-    MotionPlanner planner(State::MAINTAIN_SPEED, Direction::FORWARD);
-
-    auto mc = planner.do_plan(acceleration, steering);
-
-    ASSERT_EQ(mc.engine_left_forward, LOW_SIGNAL);
-    ASSERT_EQ(mc.engine_left_reverse, HIGH_SIGNAL);
-    ASSERT_EQ(mc.engine_right_forward, LOW_SIGNAL);
-    ASSERT_EQ(mc.engine_right_reverse, HIGH_SIGNAL);
-    ASSERT_EQ(mc.engine_left_pwm, DEFAULT_PWM);
-    ASSERT_EQ(mc.engine_right_pwm, DEFAULT_PWM);
-}
-
-TEST(ForwardMotorCommandsTest, ForwardToBackward) {
+TEST(ForwardMotorCommandsTest, FromForwardToBackwardExpectDecrease) {
     double acceleration = -1.0;
     double steering = 0.0;
 
-    MotionPlanner planner(State::MAINTAIN_SPEED, Direction::FORWARD);
+    MotionPlanner planner(State::MAINTAIN_SPEED, Direction::FORWARD, MAX_PWM_STEPS * PWM_STEP, MAX_PWM_STEPS * PWM_STEP, 0);
 
     auto mc = planner.do_plan(acceleration, steering);
 
@@ -66,15 +46,15 @@ TEST(ForwardMotorCommandsTest, ForwardToBackward) {
     ASSERT_EQ(mc.engine_left_reverse, HIGH_SIGNAL);
     ASSERT_EQ(mc.engine_right_forward, LOW_SIGNAL);
     ASSERT_EQ(mc.engine_right_reverse, HIGH_SIGNAL);
-    ASSERT_EQ(mc.engine_left_pwm, DEFAULT_PWM - 10);
-    ASSERT_EQ(mc.engine_right_pwm, DEFAULT_PWM - 10);
+    ASSERT_EQ(mc.engine_left_pwm, (MAX_PWM_STEPS - 1) * PWM_STEP);
+    ASSERT_EQ(mc.engine_right_pwm, (MAX_PWM_STEPS - 1) * PWM_STEP);
 }
 
-TEST(ForwardMotorCommandsTest, ForwardToLeft) {
+TEST(ForwardMotorCommandsTest, FromForwardToLeftExpectDecrease) {
     double acceleration = 1.0;
     double steering = -1.0;
 
-    MotionPlanner planner(State::MAINTAIN_SPEED, Direction::FORWARD);
+    MotionPlanner planner(State::MAINTAIN_SPEED, Direction::FORWARD, MAX_PWM_STEPS * PWM_STEP, MAX_PWM_STEPS * PWM_STEP, 0);
 
     auto mc = planner.do_plan(acceleration, steering);
 
@@ -82,15 +62,15 @@ TEST(ForwardMotorCommandsTest, ForwardToLeft) {
     ASSERT_EQ(mc.engine_left_reverse, HIGH_SIGNAL);
     ASSERT_EQ(mc.engine_right_forward, LOW_SIGNAL);
     ASSERT_EQ(mc.engine_right_reverse, HIGH_SIGNAL);
-    ASSERT_EQ(mc.engine_left_pwm, DEFAULT_PWM - 10);
-    ASSERT_EQ(mc.engine_right_pwm, DEFAULT_PWM - 10);
+    ASSERT_EQ(mc.engine_left_pwm, (MAX_PWM_STEPS - 1) * PWM_STEP);
+    ASSERT_EQ(mc.engine_right_pwm, (MAX_PWM_STEPS - 1) * PWM_STEP);
 }
 
-TEST(ForwardMotorCommandsTest, ForwardToRight) {
+TEST(ForwardMotorCommandsTest, FromForwardToRightExpectDecrease) {
     double acceleration = 1.0;
     double steering = 1.0;
 
-    MotionPlanner planner(State::MAINTAIN_SPEED, Direction::FORWARD);
+    MotionPlanner planner(State::MAINTAIN_SPEED, Direction::FORWARD, MAX_PWM_STEPS * PWM_STEP, MAX_PWM_STEPS * PWM_STEP, 0);
 
     auto mc = planner.do_plan(acceleration, steering);
 
@@ -98,15 +78,15 @@ TEST(ForwardMotorCommandsTest, ForwardToRight) {
     ASSERT_EQ(mc.engine_left_reverse, HIGH_SIGNAL);
     ASSERT_EQ(mc.engine_right_forward, LOW_SIGNAL);
     ASSERT_EQ(mc.engine_right_reverse, HIGH_SIGNAL);
-    ASSERT_EQ(mc.engine_left_pwm, DEFAULT_PWM - 10);
-    ASSERT_EQ(mc.engine_right_pwm, DEFAULT_PWM - 10);
+    ASSERT_EQ(mc.engine_left_pwm, (MAX_PWM_STEPS - 1) * PWM_STEP);
+    ASSERT_EQ(mc.engine_right_pwm, (MAX_PWM_STEPS - 1) * PWM_STEP);
 }
 
-TEST(ForwardMotorCommandsTest, ForwardToBackwardDecrease) {
+TEST(ForwardMotorCommandsTest, FromIncreaseForwardToBackwardExpectDecrease) {
     double acceleration = -1.0;
     double steering = 0.0;
 
-    MotionPlanner planner(State::INCREASE_SPEED, Direction::FORWARD);
+    MotionPlanner planner(State::INCREASE_SPEED, Direction::FORWARD, 2 * PWM_STEP, 2 * PWM_STEP, 1);
 
     auto mc = planner.do_plan(acceleration, steering);
 
@@ -114,15 +94,15 @@ TEST(ForwardMotorCommandsTest, ForwardToBackwardDecrease) {
     ASSERT_EQ(mc.engine_left_reverse, HIGH_SIGNAL);
     ASSERT_EQ(mc.engine_right_forward, LOW_SIGNAL);
     ASSERT_EQ(mc.engine_right_reverse, HIGH_SIGNAL);
-    ASSERT_EQ(mc.engine_left_pwm, DEFAULT_PWM - 10);
-    ASSERT_EQ(mc.engine_right_pwm, DEFAULT_PWM - 10);
+    ASSERT_EQ(mc.engine_left_pwm, PWM_STEP);
+    ASSERT_EQ(mc.engine_right_pwm, PWM_STEP);
 }
 
-TEST(ForwardMotorCommandsTest, ForwardToLeftDecrease) {
+TEST(ForwardMotorCommandsTest, FromIncreaseForwardToLeftExpectDecrease) {
     double acceleration = 1.0;
     double steering = -1.0;
 
-    MotionPlanner planner(State::INCREASE_SPEED, Direction::FORWARD);
+    MotionPlanner planner(State::INCREASE_SPEED, Direction::FORWARD, 2 * PWM_STEP, 2 * PWM_STEP, 1);
 
     auto mc = planner.do_plan(acceleration, steering);
 
@@ -130,15 +110,15 @@ TEST(ForwardMotorCommandsTest, ForwardToLeftDecrease) {
     ASSERT_EQ(mc.engine_left_reverse, HIGH_SIGNAL);
     ASSERT_EQ(mc.engine_right_forward, LOW_SIGNAL);
     ASSERT_EQ(mc.engine_right_reverse, HIGH_SIGNAL);
-    ASSERT_EQ(mc.engine_left_pwm, DEFAULT_PWM - 10);
-    ASSERT_EQ(mc.engine_right_pwm, DEFAULT_PWM - 10);
+    ASSERT_EQ(mc.engine_left_pwm, PWM_STEP);
+    ASSERT_EQ(mc.engine_right_pwm, PWM_STEP);
 }
 
-TEST(ForwardMotorCommandsTest, ForwardToRightDecrease) {
+TEST(ForwardMotorCommandsTest, FromIncreaseForwardToRightExpectDecrease) {
     double acceleration = 1.0;
     double steering = 1.0;
 
-    MotionPlanner planner(State::INCREASE_SPEED, Direction::FORWARD);
+    MotionPlanner planner(State::INCREASE_SPEED, Direction::FORWARD, 2 * PWM_STEP, 2 * PWM_STEP, 1);
 
     auto mc = planner.do_plan(acceleration, steering);
 
@@ -146,6 +126,6 @@ TEST(ForwardMotorCommandsTest, ForwardToRightDecrease) {
     ASSERT_EQ(mc.engine_left_reverse, HIGH_SIGNAL);
     ASSERT_EQ(mc.engine_right_forward, LOW_SIGNAL);
     ASSERT_EQ(mc.engine_right_reverse, HIGH_SIGNAL);
-    ASSERT_EQ(mc.engine_left_pwm, DEFAULT_PWM - 10);
-    ASSERT_EQ(mc.engine_right_pwm, DEFAULT_PWM - 10);
+    ASSERT_EQ(mc.engine_left_pwm, PWM_STEP);
+    ASSERT_EQ(mc.engine_right_pwm, PWM_STEP);
 }
