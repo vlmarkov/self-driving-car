@@ -1,7 +1,7 @@
 #include <motion-calibration/ros_module.h>
 
 #include <motion-calibration/pins.h>
-#include <motion-calibration/digital_values.h>
+#include <motion-calibration/motion_planner.h>
 
 #include <fmt/format.h>
 
@@ -24,21 +24,15 @@ MotionCalibration::MotionCalibration(std::shared_ptr<IPubSubNode> pub_sub_node)
 
 void MotionCalibration::process_motion_vector() {
     const auto mv = pub_sub_node_->get_subscription_msg();
-    const auto digital_values = convert_to_digital_values(mv.acceleration, mv.steering);
 
-    for (const auto& dv : digital_values) {
-        if (prev_cmd != dv.command) {
-            pub_sub_node_->log(fmt::format("{} command", dv.command.c_str()));
-            prev_cmd = dv.command;
-        }
+    // TODO: add rapsberry + l298 motor dc driver here
 
 #ifdef WIRING_PI_LIB
-        digitalWrite(FORWARD_PIN, dv.forward);
-        digitalWrite(BACKWARD_PIN, dv.backward);
-        digitalWrite(LEFT_TURN_PIN, dv.left_turn);
-        digitalWrite(RIGHT_TURN_PIN, dv.right_turn);
+    //digitalWrite(FORWARD_PIN, dv.forward);
+    //digitalWrite(BACKWARD_PIN, dv.backward);
+    //digitalWrite(LEFT_TURN_PIN, dv.left_turn);
+    //digitalWrite(RIGHT_TURN_PIN, dv.right_turn);
 #endif // WIRING_PI_LIB
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(dv.timeout_ms));
-    }
+    //std::this_thread::sleep_for(std::chrono::milliseconds(dv.timeout_ms));
 }

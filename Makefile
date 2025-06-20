@@ -13,11 +13,7 @@ ENABLE_WIRING_PI_LIB       := ON
 ENABLE_RASPBERRY_BUILD     := OFF
 ENABLE_RASPBERRY_DEBUG_IMG := OFF
 
-all: interfaces common lane-detection manual-control obstacle-avoidance path-planning motion-calibration main-pipeline arduino-code
-
-arduino-code:
-	mkdir -p $(BUILD_DIR)
-	cd ./$(BUILD_DIR) && cmake -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD) ../arduino/ && make
+all: interfaces common lane-detection manual-control obstacle-avoidance path-planning motion-calibration main-pipeline
 
 interfaces:
 	colcon build --packages-select interfaces --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD)
