@@ -2,6 +2,8 @@
 
 #include <common/base_pub_sub_node.h>
 
+#include <motion-calibration/motion_planner.h>
+
 class MotionCalibration
 {
 public:
@@ -14,5 +16,5 @@ public:
 
 private:
     std::shared_ptr<IPubSubNode> pub_sub_node_;
-    std::string prev_cmd;
+    MotionPlanner motion_planner_;
 };
