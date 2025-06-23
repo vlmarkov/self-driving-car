@@ -1,32 +1,40 @@
 # Motion Calibration
 
 ## Basic Information
-This module responsible to transfer C++ structure fields values to the pin digital value for Arduino board.
+This module responsible to process a basic motion calibration actions:
+- smooth forward/backward
+- smooth stop
+- smooth turn left/right
 
 ## Feature
-- store history of the previos MotionVector structre values
-- filter motion peaks (to make a very smooth motion)
-- transfer C++ structure fields values to pin digital value
+- low latency car movement changing
 
 ## Connection Scheme
-Connection between RaspberryPi and Arduino is made through simple pin connection.
+Connection between Raspberry Pi5 and L298n DC motor driver board.
 
 ```
-RaspberryPi Pins        Arduino Pins
-     [31]   -----------> [D0]
-     [33]   -----------> [D1]
-     [35]   -----------> [D2]
-     [37]   -----------> [D3]
-                         ....
+Raspberry Pi5                L298n Pins
+     [PHYS11]   -----------> [IN1]
+     [PHYS13]   -----------> [IN2]
+     [PHYS15]   -----------> [IN3]
+     [PHYS16]   -----------> [IN4]
+     [PHYS12]   -----------> [ENA]
+     [PHYS35]   -----------> [ENB]
 ```
 
 ## Pins Descriptions
-- Pin 31 forward command
-- Pin 33 backward command
-- Pin 35 left turn command
-- Pin 37 right turn command
+- Pin 11 forward command motor a
+- Pin 13 reverse command motor a
+- Pin 15 forward command motor b
+- Pin 36 reverse command motor b
+- Pin 12 pwm motor a
+- Pin 35 pwm motor b
 
 ## How To Run
+
+It is better to run it under root permission.
+Because wiringPi library requires access to `/dev/mem` for PWM managment.
+
 ```
-ros2 run motion-calibration motion_calibration
+sudo bash -c "chmod g+rw /dev/gpiomem0 && source /opt/ros/jazzy/setup.bash && source install/local_setup.bash && ros2 run motion-calibration motion_calibration"
 ```
