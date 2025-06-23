@@ -198,6 +198,9 @@ MotorCommands MotionPlanner::do_plan(double acceleration, double steering)
     //std::cout << "engine_left_pwm " << int(mc.engine_left_pwm) << std::endl;
     //std::cout << "engine_right_pwm " << int(mc.engine_right_pwm) << std::endl;
 
+    //std::cout << "current state     : " << to_str(current_state_) << std::endl;
+    //std::cout << "current direction : " << to_str(current_direction_) << std::endl;
+
     return mc;
 }
 
