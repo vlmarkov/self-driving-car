@@ -15,10 +15,13 @@ MotionCalibration::MotionCalibration(std::shared_ptr<IPubSubNode> pub_sub_node)
 #ifdef WIRING_PI_LIB
     wiringPiSetup();
 
-    pinMode(FORWARD_PIN,    OUTPUT);
-    pinMode(BACKWARD_PIN,   OUTPUT);
-    pinMode(LEFT_TURN_PIN,  OUTPUT);
-    pinMode(RIGHT_TURN_PIN, OUTPUT);
+    pinMode(ENGINE_LEFT_REVERSE_PIN,  OUTPUT);
+    pinMode(ENGINE_LEFT_FORWARD_PIN,  OUTPUT);
+    pinMode(ENGINE_RIGHT_FORWARD_PIN, OUTPUT);
+    pinMode(ENGINE_RIGHT_REVERSE_PIN, OUTPUT);
+
+    pinMode(ENGINE_LEFT_PWM_PIN,  PWM_OUTPUT);
+    pinMode(ENGINE_RIGHT_PWM_PIN, PWM_OUTPUT);
 #endif // WIRING_PI_LIB
 }
 
@@ -26,15 +29,15 @@ void MotionCalibration::process_motion_vector() {
     const auto mv = pub_sub_node_->get_subscription_msg();
     auto mc = motion_planner_.do_plan(mv.acceleration, mv.steering);
 
-    // TODO: add rapsberry + l298 motor dc driver here
-
 #ifdef WIRING_PI_LIB
-    digitalWrite(FORWARD_PIN, mc.engine_left_forward);
-    digitalWrite(BACKWARD_PIN, mc.engine_left_reverse);
-    digitalWrite(LEFT_TURN_PIN, mc.engine_right_forward);
-    digitalWrite(RIGHT_TURN_PIN, mc.engine_right_forward);
-    // TODO: pwm pins support
+    digitalWrite(ENGINE_LEFT_REVERSE_PIN,  mc.engine_left_forward);
+    digitalWrite(ENGINE_LEFT_FORWARD_PIN,  mc.engine_left_reverse);
+    digitalWrite(ENGINE_RIGHT_FORWARD_PIN, mc.engine_right_forward);
+    digitalWrite(ENGINE_RIGHT_REVERSE_PIN, mc.engine_right_forward);
+
+    pwmWrite(ENGINE_LEFT_PWM_PIN,  mc.engine_left_pwm);
+    pwmWrite(ENGINE_RIGHT_PWM_PIN, mc.engine_right_pwm);
 #endif // WIRING_PI_LIB
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }
