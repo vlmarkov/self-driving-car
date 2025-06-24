@@ -14,8 +14,8 @@ MotorCommands foward_command()
     mc.engine_right_forward = LOW_SIGNAL;
     mc.engine_right_reverse = HIGH_SIGNAL;
 
-    mc.engine_left_pwm = DEFAULT_PWM;
-    mc.engine_right_pwm = DEFAULT_PWM;
+    mc.engine_left_pwm = PWM_DEFAULT;
+    mc.engine_right_pwm = PWM_DEFAULT;
 
     return mc;
 }
@@ -29,8 +29,8 @@ MotorCommands backward_command()
     mc.engine_right_forward = HIGH_SIGNAL;
     mc.engine_right_reverse = LOW_SIGNAL;
 
-    mc.engine_left_pwm = DEFAULT_PWM;
-    mc.engine_right_pwm = DEFAULT_PWM;
+    mc.engine_left_pwm = PWM_DEFAULT;
+    mc.engine_right_pwm = PWM_DEFAULT;
 
     return mc;
 }
@@ -44,8 +44,8 @@ MotorCommands left_command()
     mc.engine_right_forward = LOW_SIGNAL;  // forward
     mc.engine_right_reverse = HIGH_SIGNAL; // forward
 
-    mc.engine_left_pwm = DEFAULT_PWM;
-    mc.engine_right_pwm = DEFAULT_PWM;
+    mc.engine_left_pwm = PWM_DEFAULT;
+    mc.engine_right_pwm = PWM_DEFAULT;
 
     return mc;
 }
@@ -59,42 +59,45 @@ MotorCommands right_command()
     mc.engine_right_forward = HIGH_SIGNAL; // backward
     mc.engine_right_reverse = LOW_SIGNAL;  // backward
 
-    mc.engine_left_pwm = DEFAULT_PWM;
-    mc.engine_right_pwm = DEFAULT_PWM;
+    mc.engine_left_pwm = PWM_DEFAULT;
+    mc.engine_right_pwm = PWM_DEFAULT;
 
     return mc;
 }
 
-Direction acceleration2direction(double acceleration)
+Direction acceleration2direction(const double acceleration)
 {
     if (acceleration > 0.0)
         return Direction::FORWARD;
     if (acceleration < 0.0)
         return Direction::BACKWARD;
+
     return Direction::NONE;
 }
 
-Direction steering2direction(double steering)
+Direction steering2direction(const double steering)
 {
     if (steering > 0.0)
         return Direction::RIGHT;
     if (steering < 0.0)
         return Direction::LEFT;
+
     return Direction::NONE;
 }
 
-std::string to_str(State s) {
+std::string to_str(const State s) {
     switch (s)
     {
+        case State::INVALID: return "INVALID";
         case State::STOP: return "STOP";
         case State::DECREASE_SPEED: return "DECREASE_SPEED";
         case State::INCREASE_SPEED: return "INCREASE_SPEED";
-        case State::MAINTAIN_SPEED: return "MAINTAIN_SPEED";   
+        case State::MAINTAIN_SPEED: return "MAINTAIN_SPEED";
     }
     return "";
 }
 
-std::string to_str(Direction d) {
+std::string to_str(const Direction d) {
     switch (d)
     {
         case Direction::NONE: return "NONE";
@@ -102,22 +105,20 @@ std::string to_str(Direction d) {
         case Direction::BACKWARD: return "BACKWARD";
         case Direction::LEFT: return "LEFT";
         case Direction::RIGHT: return "RIGHT";
+        case Direction::INVALID: return "INVALID";
     }
     return "";
 }
 
 } // namespace
 
-MotionPlanner::MotionPlanner(State initial_state,
-                             Direction initial_direction,
-                             uint8_t initial_engine_left_pwm,
-                             uint8_t initial_engine_right_pwm,
-                             uint8_t initial_change_pwm_counter)
-    : current_state_(initial_state)
-    , current_direction_(initial_direction)
-    , engine_left_pwm_(initial_engine_left_pwm)
-    , engine_right_pwm_(initial_engine_right_pwm)
-    , change_pwm_counter_(initial_change_pwm_counter)
+MotionPlanner::MotionPlanner(State state, Direction direction, uint32_t engine_left_pwm,
+                             uint32_t engine_right_pwm, uint32_t change_pwm_counter)
+    : current_state_(state)
+    , current_direction_(direction)
+    , engine_left_pwm_(engine_left_pwm)
+    , engine_right_pwm_(engine_right_pwm)
+    , change_pwm_counter_(change_pwm_counter)
 {
     transitions_ = {
         // From STOP state
@@ -156,13 +157,13 @@ MotionPlanner::MotionPlanner(State initial_state,
     };
 }
 
-MotorCommands MotionPlanner::do_plan(double acceleration, double steering)
+MotorCommands MotionPlanner::do_plan(const double acceleration, const double steering)
 {
     // Simple hierachy for line holding procedure
     auto next_direction = acceleration2direction(acceleration);
     if (steering != 0.0)
         next_direction = steering2direction(steering);
-    
+
     do_transition(next_direction);
 
     MotorCommands mc;
@@ -195,11 +196,10 @@ MotorCommands MotionPlanner::do_plan(double acceleration, double steering)
     mc.engine_left_pwm = engine_left_pwm_;
     mc.engine_right_pwm = engine_right_pwm_;
 
-    //std::cout << "engine_left_pwm " << int(mc.engine_left_pwm) << std::endl;
-    //std::cout << "engine_right_pwm " << int(mc.engine_right_pwm) << std::endl;
-
-    //std::cout << "current state     : " << to_str(current_state_) << std::endl;
-    //std::cout << "current direction : " << to_str(current_direction_) << std::endl;
+    std::cout << "engine_left_pwm   : " << int(mc.engine_left_pwm) << std::endl;
+    std::cout << "engine_right_pwm  : " << int(mc.engine_right_pwm) << std::endl;
+    std::cout << "current state     : " << to_str(current_state_) << std::endl;
+    std::cout << "current direction : " << to_str(current_direction_) << std::endl;
 
     return mc;
 }
@@ -211,29 +211,24 @@ void MotionPlanner::do_transition(Direction next_direction)
             t.current_direction == current_direction_ &&
             t.next_directions.contains(next_direction))
         {
-            //std::cout << "current_state     " << to_str(current_state_) << " next_state " << to_str(t.next_state) << std::endl;
-            //std::cout << "current_direction " << to_str(current_direction_) << " next_direction " << to_str(t.next_direction) << std::endl;
-
             if (current_state_ == State::INCREASE_SPEED || t.next_state == State::INCREASE_SPEED) {
-                ++change_pwm_counter_;
+                change_pwm_counter_ += PWM_STEP;
             }
             if (current_state_ == State::INCREASE_SPEED && t.next_state == State::MAINTAIN_SPEED) {
-                if (change_pwm_counter_ != MAX_PWM_STEPS + 1) {
+                if (change_pwm_counter_ != PWM_MAX + PWM_STEP) {
                     return; // Early exit to prevent transition and complete increase speed command
                 }
-                //std::cout << "FULL SPEED" << std::endl;
-                change_pwm_counter_ = 0;
+                change_pwm_counter_ = PWM_DEFAULT;
             }
 
             if (current_state_ == State::DECREASE_SPEED || t.next_state == State::DECREASE_SPEED) {
-                ++change_pwm_counter_;
+                change_pwm_counter_ += PWM_STEP;
             }
             if (current_state_ == State::DECREASE_SPEED && t.next_state == State::STOP) {
-                if (change_pwm_counter_ != MAX_PWM_STEPS + 1) {
+                if (change_pwm_counter_ != PWM_MAX + PWM_STEP) {
                     return; // Early exit to prevent transition and complete decrease speed command
                 }
-                //std::cout << "FULL STOP" << std::endl;
-                change_pwm_counter_ = 0;
+                change_pwm_counter_ = PWM_DEFAULT;
             }
 
             current_state_ = t.next_state;
