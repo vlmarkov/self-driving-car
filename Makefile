@@ -9,11 +9,11 @@ ENABLE_COMPILER_OPTIONS    := ON
 # Allows to manually set or disable c++23 standard features
 ENABLE_LATEST_CPP_STANDARD := ON
 # To debug purpose on your laptop (NOT Raspberry board) you can disable gpio write feature
-ENABLE_WIRING_PI_LIB       := ON
-ENABLE_RASPBERRY_BUILD     := ON
+ENABLE_WIRING_PI_LIB       := OFF
+ENABLE_RASPBERRY_BUILD     := OFF
 ENABLE_RASPBERRY_DEBUG_IMG := OFF
 
-all: interfaces common lane-detection manual-control obstacle-avoidance path-planning motion-calibration main-pipeline
+all: interfaces common lane-detection manual-control motion-calibration main-pipeline
 
 interfaces:
 	colcon build --packages-select interfaces --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD)
@@ -30,12 +30,6 @@ lane-detection:
 manual-control:
 	colcon build --packages-select manual-control --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD)
 
-obstacle-avoidance:
-	colcon build --packages-select obstacle-avoidance --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD)
-
-path-planning:
-	colcon build --packages-select path-planning --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD)
-
 motion-calibration:
 	colcon build --packages-select motion-calibration --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD) -DENABLE_WIRING_PI_LIB=$(ENABLE_WIRING_PI_LIB)
 
@@ -45,10 +39,7 @@ tests:
 	colcon test --packages-select main-pipeline --event-handlers console_direct+
 	colcon test --packages-select lane-detection --event-handlers console_direct+
 	colcon test --packages-select manual-control --event-handlers console_direct+
-	colcon test --packages-select obstacle-avoidance --event-handlers console_direct+
-	colcon test --packages-select path-planning --event-handlers console_direct+
 	colcon test --packages-select motion-calibration --event-handlers console_direct+
-	cd ./$(BUILD_DIR)/tests && ctest
 
 clean:
 	rm -Rf $(BUILD_DIR)
