@@ -50,15 +50,15 @@ void Lane::setPolyCoeff(cv::Mat laneCoeff) {
     }
 }
 
-cv::Point Lane::getStartCoordinate() {
+cv::Point Lane::getStartCoordinate() const {
     return startCoordinates;
 }
 
-bool Lane::getStatus() {
+bool Lane::getStatus() const {
     return status;
 }
 
-std::vector<float> Lane::getPolyCoeff() {
+std::vector<float> Lane::getPolyCoeff() const {
     return polyCoeff;
 }
 
@@ -66,6 +66,6 @@ void Lane::setPolyOrder(int value) {
     polyOrder = value;
 }
 
-int Lane::getPolyOrder() {
+int Lane::getPolyOrder() const {
     return polyOrder;
 }

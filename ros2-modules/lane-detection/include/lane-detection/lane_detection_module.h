@@ -43,7 +43,7 @@ public:
     void transformPerspective(const cv::Mat& src, cv::Mat& dst, cv::Mat& Tm, cv::Mat& invTm);
     void extractLanes(const cv::Mat& src, cv::Mat& dst, Lane& lane1, Lane& lane2, int curveFlag);
     void fitPoly(const std::vector<cv::Point>& src, cv::Mat& dst, int order);
-    double getDriveHeading(Lane& lane1, Lane& lane2, std::string& direction);
+    double getDriveHeading(const Lane& lane1, const Lane& lane2, std::string& direction);
 
     LaneDetectionStatus displayOutput(const cv::Mat& src, cv::Mat& src2, cv::Mat& dst, Lane& lane1, Lane& lane2, cv::Mat inv);
     LaneDetectionStatus detect_lane(cv::Mat frame);

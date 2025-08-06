@@ -16,13 +16,13 @@ public:
 
     int getStableCenter(int coordinate);
     void setStartCoordinate(cv::Point point);
-    cv::Point getStartCoordinate();
+    cv::Point getStartCoordinate() const;
     void setStatus(bool flag);
-    bool getStatus();
+    bool getStatus() const;
     void setPolyOrder(int value);
-    int getPolyOrder();
+    int getPolyOrder() const;
     void setPolyCoeff(cv::Mat coeff);
-    std::vector<float> getPolyCoeff();
+    std::vector<float> getPolyCoeff() const;
 
 private:
     int polyOrder;                // declare integer for order of line.

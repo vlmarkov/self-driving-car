@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
     test_raspberry_camera();
 #else
     test_static_image(argc, argv);
-#endif // ENABLE_RASPBERRY_BUILD   
+#endif // ENABLE_RASPBERRY_BUILD
 
     return 0;
 }

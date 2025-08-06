@@ -85,13 +85,13 @@ void LaneDetectionModule::transformPerspective(const cv::Mat& src, cv::Mat& dst,
 }
 
 void LaneDetectionModule::extractLanes(const cv::Mat& src, cv::Mat& colorLane, Lane& lane1, Lane& lane2, int curveFlag) {
-    int w = src.cols;
-    int h = src.rows;
+    const int w = src.cols;
+    const int h = src.rows;
 
     // Height to start the sliding windows
-    int padding = 10;
-    int bottomHeight = h - padding;
-    int bottomWidth = w - padding;
+    const int padding = 10;
+    const int bottomHeight = h - padding;
+    const int bottomWidth = w - padding;
 
     // Convert the gray src image to bgr for plotting colors(3-channel)
     cv::cvtColor(src, colorLane, cv::COLOR_GRAY2BGR);
@@ -103,17 +103,6 @@ void LaneDetectionModule::extractLanes(const cv::Mat& src, cv::Mat& colorLane, L
     // Reduce the input matrix to a single row
     std::vector<double> histogram;
     cv::reduce(croppedIm, histogram, 0, cv::REDUCE_SUM);
-
-    // This is a very simple check
-    // Can we get a valid histogram to detect the lanes?
-    bool zero_values = false;
-    for (const auto& h : histogram) {
-        if (h == 0)
-            zero_values = true;
-    }
-
-    if (!zero_values)
-        throw std::runtime_error("can't build historgram");
 
     // Split the two vectors for left and right lane
     std::size_t const halfSize = histogram.size() / 2;
@@ -137,9 +126,9 @@ void LaneDetectionModule::extractLanes(const cv::Mat& src, cv::Mat& colorLane, L
     std::vector<cv::Point> rightLane;
 
     // Sliding Window approach
-    int windowCount = 9;
-    int windowHeight = (h - padding) / windowCount;
-    int windowWidth = windowHeight * 2;
+    const int windowCount = 9;
+    const int windowHeight = (h - padding) / windowCount;
+    const int windowWidth = windowHeight * 2;
 
     // Left Lane ***********************************************************
     int currentHeight = bottomHeight;
@@ -237,40 +226,32 @@ void LaneDetectionModule::extractLanes(const cv::Mat& src, cv::Mat& colorLane, L
         currentHeight = currentHeight - windowHeight;
     }
 
-    // Mat objects for lane parameters
-    cv::Mat leftLaneParams = cv::Mat::zeros(curveFlag + 1, 1, CV_64F);
-    cv::Mat rightLaneParams = cv::Mat::zeros(curveFlag + 1, 1, CV_64F);
+    if (!leftLane.empty()) {
+        // Mat objects for lane parameters
+        cv::Mat leftLaneParams = cv::Mat::zeros(curveFlag + 1, 1, CV_64F);
+        // Call the fitpoly function
+        fitPoly(leftLane, leftLaneParams, curveFlag);
+        // Assign to the lane object and set params
+        lane1.setPolyCoeff(leftLaneParams);
+        // Assign status
+        lane1.setStatus(true);
+    }
 
-    // Call the fitpoly function
-    fitPoly(leftLane, leftLaneParams, curveFlag);
-    fitPoly(rightLane, rightLaneParams, curveFlag);
-
-    // Assign to the lane object and set params
-    lane1.setPolyCoeff(leftLaneParams);
-    lane2.setPolyCoeff(rightLaneParams);
-
-    // Assign status
-    lane1.setStatus(true);
-    lane2.setStatus(true);
-
-    // All the plotting part below this line - Not necessary for program working
-    // Create a copy of the input src image for plotting purposes
-    cv::circle(colorLane,
-               cv::Point(maxLeftIndex, bottomHeight),
-               10,
-               cv::Scalar(0, 0, 125),
-               -1
-    );
-
-    cv::circle(colorLane,
-               cv::Point(maxRightIndex, bottomHeight),
-               10,
-               cv::Scalar(0, 0, 125),
-               -1
-    );
+    if (!rightLane.empty()) {
+        // Mat objects for lane parameters
+        cv::Mat rightLaneParams = cv::Mat::zeros(curveFlag + 1, 1, CV_64F);
+        // Call the fitpoly function
+        fitPoly(rightLane, rightLaneParams, curveFlag);
+        // Assign to the lane object and set params
+        lane2.setPolyCoeff(rightLaneParams);
+        lane2.setStatus(true);
+    }
 }
 
 void LaneDetectionModule::fitPoly(const std::vector<cv::Point>& src, cv::Mat& dst, int order) {
+    if (src.empty())
+        return;
+
     cv::Mat x = cv::Mat(src.size(), 1, CV_32F);
     cv::Mat y = cv::Mat(src.size(), 1, CV_32F);
 
@@ -295,46 +276,44 @@ void LaneDetectionModule::fitPoly(const std::vector<cv::Point>& src, cv::Mat& ds
     w.convertTo(dst, ((x.depth() == CV_64F || y.depth() == CV_64F) ? CV_64F : CV_32F));
 }
 
-double LaneDetectionModule::getDriveHeading(Lane& lane1, Lane& lane2, std::string& direction) {
-    double modifiedSlope = 0;
+double LaneDetectionModule::getDriveHeading(const Lane& lane1, const Lane& lane2, std::string& direction) {
+    double modifiedSlope = 0.0;
+
     if (lane1.getStatus() && lane2.getStatus()) {
-    // Get lane 1
-    std::vector<float> laneOneCoeff = lane1.getPolyCoeff();
+        // Get lane 1
+        std::vector<float> laneOneCoeff = lane1.getPolyCoeff();
 
-    // Variables to take the slope of lane 1
-    cv::Point2d top, bottom;
-    top.y = 20;
-    bottom.y = 700;
+        // Variables to take the slope of lane 1
+        cv::Point2d top, bottom;
+        top.y = 20;
+        bottom.y = 700;
 
-    // Get top x co-ordinate for y = 20
-    top.x = pow(top.y, 2) * laneOneCoeff[2] + pow(top.y, 1) * laneOneCoeff[1]
-        + laneOneCoeff[0];
+        // Get top x co-ordinate for y = 20
+        top.x = pow(top.y, 2) * laneOneCoeff[2] + pow(top.y, 1) * laneOneCoeff[1] + laneOneCoeff[0];
 
-    // Get bottom x co-ordinate for y = 700;
-    bottom.x = pow(bottom.y, 2) * laneOneCoeff[2]
-        + pow(bottom.y, 1) * laneOneCoeff[1] + laneOneCoeff[0];
+        // Get bottom x co-ordinate for y = 700;
+        bottom.x = pow(bottom.y, 2) * laneOneCoeff[2] + pow(bottom.y, 1) * laneOneCoeff[1] + laneOneCoeff[0];
 
-    // Calculate slope
-    double slope = atan((top.y - bottom.y) / (top.x - bottom.x)) * 180
-        / 3.14159265;
+        // Calculate slope
+        double slope = atan((top.y - bottom.y) / (top.x - bottom.x)) * 180 / 3.14159265;
 
-    // We get negative slope to the right and positive slope to the left
-    // Thats because of opencv coordinate system
-    if (slope > -85 && slope < 0) {
-      // Negative case ie turn right. Slope changed to positive for right
-      modifiedSlope = 90 + slope;
-      direction = "Turn right";
-    } else if (slope < 85 && slope > 0) {
-      // Positive case ie turn left. Slope changed to negative for left
-      modifiedSlope = slope - 90;
-      direction = "Turn left";
-    } else {
-      modifiedSlope = modifiedSlope / 0.5;
-      direction = "Head straight";
+        // We get negative slope to the right and positive slope to the left
+        // Thats because of opencv coordinate system
+        if (slope > -85 && slope < 0) {
+            // Negative case ie turn right. Slope changed to positive for right
+            modifiedSlope = 90 + slope;
+            direction = "Turn right";
+        } else if (slope < 85 && slope > 0) {
+            // Positive case ie turn left. Slope changed to negative for left
+            modifiedSlope = slope - 90;
+            direction = "Turn left";
+        } else {
+            modifiedSlope = modifiedSlope / 0.5;
+            direction = "Head straight";
+        }
     }
-  }
 
-  return modifiedSlope;
+    return modifiedSlope;
 }
 
 LaneDetectionStatus LaneDetectionModule::displayOutput(const cv::Mat& src, cv::Mat& src2, cv::Mat& dst, Lane& lane1, Lane& lane2, cv::Mat inv) {
@@ -346,45 +325,48 @@ LaneDetectionStatus LaneDetectionModule::displayOutput(const cv::Mat& src, cv::M
     int h = src.rows;
 
     // **** Lane 1 **** //
+    if (lane1.getStatus()) {
+        // Find the points for drawing polynomial
+        std::vector<float> laneOneCoeff = lane1.getPolyCoeff();
 
-    // Find the points for drawing polynomial
-    std::vector<float> laneOneCoeff = lane1.getPolyCoeff();
+        // Put in the first point of the lane i.e. starting coordinate
+        std::vector<cv::Point> laneOnePoints = { };
 
-    // Put in the first point of the lane i.e. starting coordinate
-    std::vector<cv::Point> laneOnePoints = { };
+        // Iterate through all the points
+        for (size_t i = 0; i < yaxis.size(); i++) {
+            // Calculate the x values for the y's
+            int x = pow(yaxis[i], 2) * laneOneCoeff[2] + pow(yaxis[i], 1) * laneOneCoeff[1] + laneOneCoeff[0];
+            laneOnePoints.push_back(cv::Point(x, yaxis[i]));
+            cv::circle(dispOutput, cv::Point(x, yaxis[i]), 10, cv::Scalar(125, 0, 125), -1);
+            cv::arrowedLine(dispOutput, cv::Point(x + 400, yaxis[i] + 30), cv::Point(x + 400, yaxis[i]), cv::Scalar(255, 255, 0), 6, 8, 0, 0.8);
+        }
 
-    // Iterate through all the points
-    for (size_t i = 0; i < yaxis.size(); i++) {
-        // Calculate the x values for the y's
-        int x = pow(yaxis[i], 2) * laneOneCoeff[2] + pow(yaxis[i], 1) * laneOneCoeff[1] + laneOneCoeff[0];
-        laneOnePoints.push_back(cv::Point(x, yaxis[i]));
-        cv::circle(dispOutput, cv::Point(x, yaxis[i]), 10, cv::Scalar(125, 0, 125), -1);
-        cv::arrowedLine(dispOutput, cv::Point(x + 400, yaxis[i] + 30), cv::Point(x + 400, yaxis[i]), cv::Scalar(255, 255, 0), 6, 8, 0, 0.8);
+        // PLot the curve
+        const cv::Point *pts1 = (const cv::Point*) cv::Mat(laneOnePoints).data;
+        int npts1 = cv::Mat(laneOnePoints).rows;
+        cv::polylines(dispOutput, &pts1, &npts1, 1, false, cv::Scalar(153, 255, 153), 10);
     }
-
-    // PLot the curve
-    const cv::Point *pts1 = (const cv::Point*) cv::Mat(laneOnePoints).data;
-    int npts1 = cv::Mat(laneOnePoints).rows;
-    cv::polylines(dispOutput, &pts1, &npts1, 1, false, cv::Scalar(153, 255, 153), 10);
 
     // **** Lane 2 **** //
-    // Find the points for drawing polynomial
-    std::vector<float> laneTwoCoeff = lane2.getPolyCoeff();
-    // Put in the first point of the lane i.e. starting coordinate
-    std::vector<cv::Point> laneTwoPoints = { };
+    if (lane2.getStatus()) {
+        // Find the points for drawing polynomial
+        std::vector<float> laneTwoCoeff = lane2.getPolyCoeff();
+        // Put in the first point of the lane i.e. starting coordinate
+        std::vector<cv::Point> laneTwoPoints = { };
 
-    // Iterate through all the points
-    for (size_t i = 0; i < yaxis.size(); i++) {
-        // Calculate the x values for the y's
-        int x = pow(yaxis[i], 2) * laneTwoCoeff[2] + pow(yaxis[i], 1) * laneTwoCoeff[1] + laneTwoCoeff[0];
-        laneTwoPoints.push_back(cv::Point(x, yaxis[i]));
-        cv::circle(dispOutput, cv::Point(x, yaxis[i]), 10, cv::Scalar(125, 0, 125), -1);
+        // Iterate through all the points
+        for (size_t i = 0; i < yaxis.size(); i++) {
+            // Calculate the x values for the y's
+            int x = pow(yaxis[i], 2) * laneTwoCoeff[2] + pow(yaxis[i], 1) * laneTwoCoeff[1] + laneTwoCoeff[0];
+            laneTwoPoints.push_back(cv::Point(x, yaxis[i]));
+            cv::circle(dispOutput, cv::Point(x, yaxis[i]), 10, cv::Scalar(125, 0, 125), -1);
+        }
+
+        // PLot the curve
+        const cv::Point *pts2 = (const cv::Point*) cv::Mat(laneTwoPoints).data;
+        int npts2 = cv::Mat(laneTwoPoints).rows;
+        cv::polylines(dispOutput, &pts2, &npts2, 1, false, cv::Scalar(153, 255, 153), 10);
     }
-
-    // PLot the curve
-    const cv::Point *pts2 = (const cv::Point*) cv::Mat(laneTwoPoints).data;
-    int npts2 = cv::Mat(laneTwoPoints).rows;
-    cv::polylines(dispOutput, &pts2, &npts2, 1, false, cv::Scalar(153, 255, 153), 10);
 
     cv::Mat unwarpedOutput, unwarpedColor;
     cv::warpPerspective(dispOutput, unwarpedOutput, inv, cv::Size(w, h));
@@ -418,11 +400,8 @@ LaneDetectionStatus LaneDetectionModule::displayOutput(const cv::Mat& src, cv::M
     }
 
     std::string result = "Drive angle: " + headStr + " degrees.";
-    //std::cout << result << " Action: " << direction << std::endl;
-    cv::putText(unwarpedColor, result, cv::Point(500, 50), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 255, 255), 2);
-    cv::putText(unwarpedColor, direction, cv::Point(550, 100), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 255, 255), 2);
-    //cv::putText(unwarpedColor, "Press C to exit.", cv::Point(1000, 50), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0, 0, 255), 2);
-    cv::putText(unwarpedColor, "Lane Detection", cv::Point(75, 50), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(153, 51, 255), 2);
+    cv::putText(unwarpedColor, result, cv::Point(10, 50), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 255, 255), 2);
+    cv::putText(unwarpedColor, direction, cv::Point(10, 100), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 255, 255), 2);
 
     unwarpedColor.copyTo(dst);
 
@@ -444,7 +423,7 @@ LaneDetectionStatus LaneDetectionModule::detect_lane(cv::Mat frame) {
         distColor, gaussianBlurImage, ROIImage, warpedImage, undistortedImage,
         laneColor, finalOutput;
 
-    try {            
+    try {
         // Step 1: Undistort the input image given camera params
         undistortImage(frame, undistortedImage);
 
