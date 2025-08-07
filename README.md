@@ -1,17 +1,16 @@
-# Self-Driving Arduino Car
+# Self-Driving Car
 
-A very basic self driving arduino car
+A very basic self driving car based on Rapsberry Pi5 board.
 
 # Features
-- lane holding
-- motion planing
+- lane detection
+- motion calibation
 - manual control
 
 # Requirements
 - ubuntu 24.04
 - latest cmake version
 - latest gcc or clang version
-- arduino ide
 - gtest
 - [wiringpi](https://github.com/WiringPi/WiringPi/tree/master)
   - do not forget to add user to gpio group
@@ -19,8 +18,7 @@ A very basic self driving arduino car
 - opencv
   - `sudo ln -s /usr/include/opencv4/opencv2 /usr/include/opencv2`
 - [ros2](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html)
-- [LLCV](https://github.com/kbarni/LCCV/tree/main) LCCV (libcamera bindings for OpenCV) is a small wrapper library that provides access to the Raspberry Pi camera in OpenCV.
-
+- [LCCV](https://github.com/kbarni/LCCV/tree/main) LCCV (libcamera bindings for OpenCV) is a small wrapper library that provides access to the Raspberry Pi camera in OpenCV.
 
 # Prepare your ROS2 environment
 1. According to [official documentation](https://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html#source-the-setup-files) for every new shell you will need to run this command to have access to the ROS 2 commands:
@@ -49,8 +47,11 @@ make tests
 # Run
 1. Choose module to run
 ```
-ros2 run main-pipeline main_pipeline
-ros2 run manual-control manual_control
-ros2 run lane-detection lane-detection
-ros2 run motion-calibration motion_calibration
+sudo bash -c "chmod g+rw /dev/gpiomem0 && source /opt/ros/jazzy/setup.bash && source install/local_setup.bash && ros2 run motion-calibration motion_calibration"
+
+sudo bash -c "source /opt/ros/jazzy/setup.bash && source install/local_setup.bash && ros2 run lane-detection lane-detection"
+
+sudo bash -c "source /opt/ros/jazzy/setup.bash && source install/local_setup.bash && ros2 run main-pipeline main_pipeline"
+
+sudo bash -c "source /opt/ros/jazzy/setup.bash && source install/local_setup.bash && ros2 run manual-control manual_control 192.168.1.70 8080"
 ```
