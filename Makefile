@@ -33,6 +33,9 @@ manual-control:
 motion-calibration:
 	colcon build --packages-select motion-calibration --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD) -DENABLE_WIRING_PI_LIB=$(ENABLE_WIRING_PI_LIB)
 
+remote-control:
+	colcon build --packages-select remote-control --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD) -DENABLE_WIRING_PI_LIB=$(ENABLE_WIRING_PI_LIB)
+
 tests:
 	colcon test --packages-select interfaces --event-handlers console_direct+
 	colcon test --packages-select common --event-handlers console_direct+
@@ -40,6 +43,7 @@ tests:
 	colcon test --packages-select lane-detection --event-handlers console_direct+
 	colcon test --packages-select manual-control --event-handlers console_direct+
 	colcon test --packages-select motion-calibration --event-handlers console_direct+
+	colcon test --packages-select remote-control --event-handlers console_direct+
 
 clean:
 	rm -Rf $(BUILD_DIR)
