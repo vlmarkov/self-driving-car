@@ -26,7 +26,7 @@ public:
 
 private:
     rclcpp::TimerBase::SharedPtr timer_;
-    std::shared_ptr<SubscribedModule> manual_control_module_;
+    std::shared_ptr<SubscribedModule> remote_control_module_;
     std::shared_ptr<SubscribedModule> motion_calibration_module_;
 
     std::unordered_set<std::string> module_name_set_;

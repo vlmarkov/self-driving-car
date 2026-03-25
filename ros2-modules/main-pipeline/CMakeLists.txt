@@ -23,7 +23,7 @@ find_package(rclcpp REQUIRED)
 
 find_package(interfaces REQUIRED)
 find_package(common REQUIRED)
-find_package(manual-control REQUIRED)
+find_package(remote-control REQUIRED)
 find_package(lane-detection REQUIRED)
 find_package(motion-calibration REQUIRED)
 
@@ -36,7 +36,7 @@ add_executable(main_pipeline src/main.cpp
 ament_target_dependencies(main_pipeline
                           rclcpp
                           common
-                          manual-control
+                          remote-control
                           lane-detection
                           motion-calibration)
 
