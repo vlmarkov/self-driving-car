@@ -1,6 +1,5 @@
 #include <main-pipeline/ros_module.h>
 
-#include <manual-control/ros_module.h>
 #include <motion-calibration/ros_module.h>
 
 #include <chrono>
@@ -21,7 +20,7 @@ MainPipeline::MainPipeline()
     auto cb = [this]() -> void { this->tick_(); };
     timer_ = this->create_wall_timer(DEFAULT_TICK_TIMEOUT, cb);
 
-    manual_control_module_ = add_module_(ManualControl::kName);
+    remote_control_module_ = add_module_("RemoteControl");
     motion_calibration_module_ = add_module_(MotionCalibration::kName);
 }
 
@@ -35,8 +34,8 @@ void MainPipeline::add_module(std::string name) {
 }
 
 void MainPipeline::tick_() {
-    if (manual_control_module_->data.is_auto_pilot_on == false) {
-        transfer_message_("OFF", manual_control_module_, motion_calibration_module_);
+    if (remote_control_module_->data.is_auto_pilot_on == false) {
+        transfer_message_("OFF", remote_control_module_, motion_calibration_module_);
         return;
     }
 
