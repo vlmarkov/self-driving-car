@@ -11,6 +11,8 @@ public:
     virtual void open(std::string address, uint16_t port) = 0;
     virtual void close() = 0;
 
+    virtual bool is_connected() = 0;
+
     virtual int read_data(std::string& data) = 0;
     virtual int send_data(std::string data) = 0;
 

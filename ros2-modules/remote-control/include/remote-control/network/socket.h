@@ -16,6 +16,8 @@ public:
     void open(std::string address, uint16_t port) final;
     void close() final;
 
+    bool is_connected() final;
+
     int read_data(std::string& data) final;
     int send_data(std::string data) final;
 

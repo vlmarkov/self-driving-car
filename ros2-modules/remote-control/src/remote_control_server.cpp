@@ -80,7 +80,7 @@ void process_remote_request(
     buffer.resize(MAX_DATA_SIZE);
 
     if (tcp_server->read_request(buffer) < 1) {
-        return;
+        throw std::runtime_error("can't read request, connection lost, restart");
     }
 
     Request request(buffer);
@@ -174,6 +174,6 @@ void process_remote_request(
     }
 
     if (tcp_server->send_response(response.serialize()) < 1) {
-        return;
+        throw std::runtime_error("can't send response, connection lost, restart");
     }
 }

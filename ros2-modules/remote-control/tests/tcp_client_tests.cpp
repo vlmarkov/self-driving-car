@@ -19,6 +19,7 @@ class MockSocket : public ISocket {
 public:
     MOCK_METHOD(void, open, (std::string address, uint16_t port), (final));
     MOCK_METHOD(void, close, (), (final));
+    MOCK_METHOD(bool, is_connected, (), (final));
     MOCK_METHOD(int, read_data, (std::string&), (final));
     MOCK_METHOD(int, send_data, (std::string), (final));
 };
@@ -28,6 +29,9 @@ public:
 TEST(TcpClientTest, ExpectCreation) {
     auto mock_socket = std::make_unique<MockSocket>();
 
+    EXPECT_CALL(*(mock_socket.get()), is_connected).Times(1).WillOnce(
+        ::testing::Return(true)
+    );
     EXPECT_CALL(*(mock_socket.get()), open(TEST_IP, TEST_PORT)).Times(1);
     EXPECT_CALL(*(mock_socket.get()), close).Times(1);
 
@@ -37,6 +41,9 @@ TEST(TcpClientTest, ExpectCreation) {
 TEST(TcpClientTest, ExpectSendRequest) {
     auto mock_socket = std::make_unique<MockSocket>();
 
+    EXPECT_CALL(*(mock_socket.get()), is_connected).Times(1).WillOnce(
+        ::testing::Return(true)
+    );
     EXPECT_CALL(*(mock_socket.get()), send_data).Times(1).WillOnce(
         ::testing::Return(TEST_REQ_SIZE)
     );
@@ -49,6 +56,9 @@ TEST(TcpClientTest, ExpectSendRequest) {
 TEST(TcpClientTest, ExpectReadResponse) {
     auto mock_socket = std::make_unique<MockSocket>();
 
+    EXPECT_CALL(*(mock_socket.get()), is_connected).Times(1).WillOnce(
+        ::testing::Return(true)
+    );
     EXPECT_CALL(*(mock_socket.get()), read_data).Times(1).WillOnce(
         [](std::string& s) { s = TEST_RES; return TEST_RES_SIZE; }
     );

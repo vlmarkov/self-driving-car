@@ -7,6 +7,9 @@ TcpServer::TcpServer(std::unique_ptr<IServerSocket> socket, std::string address,
     server_socket_->listen();
 
     client_socket_ = server_socket_->accept_client();
+    if (client_socket_->is_connected() == false) {
+        throw std::runtime_error("can't connect to the client");
+    }
 }
 
 TcpServer::~TcpServer() {
