@@ -114,6 +114,11 @@ void ClientSocket::close() {
     }
 
     ::close(fd_);
+    fd_ = -1;
+}
+
+bool ClientSocket::is_connected() {
+    return fd_ > 0;
 }
 
 int ClientSocket::read_data(std::string& data) {

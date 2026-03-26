@@ -10,6 +10,7 @@ class MockSocket : public ISocket {
 public:
     MOCK_METHOD(void, open, (std::string address, uint16_t port), (final));
     MOCK_METHOD(void, close, (), (final));
+    MOCK_METHOD(bool, is_connected, (), (final));
     MOCK_METHOD(int, read_data, (std::string&), (final));
     MOCK_METHOD(int, send_data, (std::string), (final));
 };
@@ -19,6 +20,10 @@ protected:
     void SetUp() override {
         auto mock_socket = std::make_unique<MockSocket>();
         mock_socket_ptr = mock_socket.get();
+
+        EXPECT_CALL(*mock_socket_ptr, is_connected).Times(1).WillOnce(
+            ::testing::Return(true)
+        );
 
         tcp_client = std::make_unique<TcpClient>(
             std::move(mock_socket),
@@ -186,6 +191,9 @@ TEST(RemoteControlClientInvalidRequestTest, ExpectNoRequest) {
 
     EXPECT_CALL(*mock_socket.get(), read_data).Times(0);
     EXPECT_CALL(*mock_socket.get(), send_data).Times(0);
+    EXPECT_CALL(*mock_socket, is_connected).Times(1).WillOnce(
+        ::testing::Return(true)
+    );
 
     auto tcp_client = std::make_unique<TcpClient>(
         std::move(mock_socket),

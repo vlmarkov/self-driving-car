@@ -25,6 +25,7 @@ class MockClientSocket : public ISocket {
 public:
     MOCK_METHOD(void, open, (std::string address, uint16_t port), (final));
     MOCK_METHOD(void, close, (), (final));
+    MOCK_METHOD(bool, is_connected, (), (final));
     MOCK_METHOD(int, read_data, (std::string&), (final));
     MOCK_METHOD(int, send_data, (std::string), (final));
 };
@@ -34,6 +35,10 @@ public:
 TEST(TcpServerTest, ExpectCreation) {
     auto mock_server_socket = std::make_unique<MockServerSocket>();
     auto mock_client_socket = std::make_unique<MockClientSocket>();
+
+    EXPECT_CALL(*(mock_client_socket.get()), is_connected).Times(1).WillOnce(
+        ::testing::Return(true)
+    );
 
     EXPECT_CALL(*(mock_server_socket.get()), open(TEST_IP, TEST_PORT)).Times(1);
     EXPECT_CALL(*(mock_server_socket.get()), listen).Times(1);
@@ -49,6 +54,9 @@ TEST(TcpClentTest, ExpectReadRequest) {
     auto mock_server_socket = std::make_unique<MockServerSocket>();
     auto mock_client_socket = std::make_unique<MockClientSocket>();
 
+    EXPECT_CALL(*(mock_client_socket.get()), is_connected).Times(1).WillOnce(
+        ::testing::Return(true)
+    );
     EXPECT_CALL(*(mock_client_socket.get()), read_data).Times(1).WillOnce(
         [](std::string& s) { s = TEST_REQ; return TEST_REQ_SIZE; }
     );
@@ -67,6 +75,9 @@ TEST(TcpClentTest, ExpectSendResponse) {
     auto mock_server_socket = std::make_unique<MockServerSocket>();
     auto mock_client_socket = std::make_unique<MockClientSocket>();
 
+    EXPECT_CALL(*(mock_client_socket.get()), is_connected).Times(1).WillOnce(
+        ::testing::Return(true)
+    );
     EXPECT_CALL(*(mock_client_socket.get()), send_data).Times(1).WillOnce(
         ::testing::Return(TEST_RES_SIZE)
     );

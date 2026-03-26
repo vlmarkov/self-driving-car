@@ -18,8 +18,12 @@ void run_server(std::stop_token stop_token,
     auto ros_exec = std::make_shared<RosExecutor>();
 
     while(!stop_token.stop_requested()) {
-        // TODO: support client connection lost
-        process_remote_request(sys_state, tcp_server, ros_node, sys_exec, ros_exec);
+        try {
+            process_remote_request(sys_state, tcp_server, ros_node, sys_exec, ros_exec);
+        } catch (std::exception& e) {
+            std::cerr << e.what() << std::endl;
+            tcp_server = std::make_shared<TcpServer>(create_server_socket(), address, port);
+        }
     }
 }
 

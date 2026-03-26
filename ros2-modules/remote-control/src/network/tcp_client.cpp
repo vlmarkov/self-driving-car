@@ -4,6 +4,9 @@ TcpClient::TcpClient(std::unique_ptr<ISocket> socket, std::string address, uint1
     : socket_(std::move(socket))
 {
     socket_->open(address, port);
+    if (socket_->is_connected() == false) {
+        throw std::runtime_error("can't connect to the server");
+    }
 }
 
 TcpClient::~TcpClient() {

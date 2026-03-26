@@ -10,23 +10,36 @@ namespace {
 
 constexpr auto NAME = "REMOTE-CONTROL-CLIENT";
 
-#define LOG_REQUEST(msg) {                                            \
-    std::cout << "["<< NAME << "] send request " << msg << std::endl; \
-}                                                                     \
-
-#define LOG_RESPONSE(msg) {                                            \
-    std::cout << "["<< NAME << "] read response " << msg << std::endl; \
-}                                                                      \
-
 Response process_request(TcpClient& client, const Request& request) {
     std::string response;
     response.resize(MAX_DATA_SIZE);
 
     const auto send_bytes = client.send_request(request.serialize());
-    LOG_REQUEST(request.serialize() << " " << send_bytes << " bytes");
+    if (send_bytes < 1) {
+        throw std::runtime_error("lost connection");
+    }
+
+    std::cout << "["<< NAME << "] send request "
+              << request.serialize()
+              << " "
+              << send_bytes
+              << " bytes"
+              << std::endl;
 
     const auto recv_bytes = client.read_response(response);
-    LOG_RESPONSE(request.serialize() << " " << response << " " << recv_bytes << " bytes");
+    if (send_bytes < 1) {
+        throw std::runtime_error("lost connection");
+    }
+
+    std::cout << "["<< NAME << "] read response "
+              << request.serialize()
+              << " "
+              << response
+              << " "
+              << recv_bytes
+              << " bytes"
+              << std::endl;
+
     return Response(response);
 }
 

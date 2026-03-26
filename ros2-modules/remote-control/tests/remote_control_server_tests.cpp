@@ -30,6 +30,7 @@ class MockClientSocket : public ISocket {
 public:
     MOCK_METHOD(void, open, (std::string address, uint16_t port), (final));
     MOCK_METHOD(void, close, (), (final));
+    MOCK_METHOD(bool, is_connected, (), (final));
     MOCK_METHOD(int, read_data, (std::string&), (final));
     MOCK_METHOD(int, send_data, (std::string), (final));
 };
@@ -42,6 +43,9 @@ protected:
 
         mock_client_socket_ptr = mock_client_socket.get();
 
+        EXPECT_CALL(*(mock_client_socket.get()), is_connected).Times(1).WillOnce(
+        ::testing::Return(true)
+        );
         EXPECT_CALL(*(mock_server_socket.get()), accept_client).Times(1).WillOnce(
             ::testing::Return(std::move(mock_client_socket))
         );
