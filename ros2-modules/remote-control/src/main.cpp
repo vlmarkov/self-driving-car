@@ -22,7 +22,10 @@ void run_server(std::stop_token stop_token,
             process_remote_request(sys_state, tcp_server, ros_node, sys_exec, ros_exec);
         } catch (std::exception& e) {
             std::cerr << e.what() << std::endl;
+            sys_state = std::make_shared<SystemState>();
             tcp_server = std::make_shared<TcpServer>(create_server_socket(), address, port);
+            sys_exec = std::make_shared<SystemExecutor>();
+            ros_exec = std::make_shared<RosExecutor>();
         }
     }
 }

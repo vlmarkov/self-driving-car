@@ -3,6 +3,9 @@
 
 #include <vector>
 #include <string>
+#include <thread>
+#include <chrono>
+#include <fstream>
 #include <sstream>
 #include <iostream>
 
@@ -43,6 +46,26 @@ Response process_request(TcpClient& client, const Request& request) {
     return Response(response);
 }
 
+Response process_test_cmd(TcpClient& client, const std::string& file) {
+    std::ifstream f(file);
+    if (!f.is_open())
+        return {};
+
+    process_request(client, Request(START_SW));
+    process_request(client, Request(STOP_AUTO_PILOT));
+
+    for (const auto& data: nlohmann::json::parse(f)) {
+        const auto speed = data[SPEED].get<int>();
+        const auto angle = data[ANGLE].get<int>();
+        const auto delay_ms = data[DELAY_MS].get<int>();
+
+        process_request(client, Request(speed, angle));
+        std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
+    }
+
+    return process_request(client, Request(STOP_AUTO_PILOT));
+}
+
 } // namespace
 
 std::optional<Response> process_user_input(
@@ -53,8 +76,6 @@ std::optional<Response> process_user_input(
 {
     const Request request(user_input);
     const auto& command = request.get_command();
-
-    // TODO: add support of test scenario commands
 
     if (command == RESTART_SW) {
         return process_request(client, request);
@@ -78,6 +99,13 @@ std::optional<Response> process_user_input(
         return process_request(client, Request(speed, ++angle));
     } else if (command == RIGHT) {
         return process_request(client, Request(speed, --angle));
+    } else if (command == RUN_TEST_CMD) {
+        auto file = request.get_args();
+        if (file.length() >= 2) {
+            file.erase(0, 1);
+            file.pop_back();
+        }
+        return process_test_cmd(client, file);
     }
 
     return {};
