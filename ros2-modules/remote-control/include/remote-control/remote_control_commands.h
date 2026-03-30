@@ -5,7 +5,8 @@
 #include <string>
 
 constexpr auto EXIT = "exit";
-constexpr auto TEST_CMD = "test_cmd"; // TODO: !
+
+constexpr auto RUN_TEST_CMD = "run_test_cmd";
 
 constexpr auto BUILD_SW = "build_sw";
 constexpr auto UPDATE_SW = "update_sw";
@@ -23,6 +24,7 @@ constexpr auto RIGHT = "d";
 
 constexpr auto SPEED = "speed";
 constexpr auto ANGLE = "angle";
+constexpr auto DELAY_MS = "delay_ms";
 
 constexpr auto DELIMITER = ':';
 

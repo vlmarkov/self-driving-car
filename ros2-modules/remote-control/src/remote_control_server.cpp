@@ -162,13 +162,12 @@ void process_remote_request(
         } else {
             response = ros_exec->execute(request, ros_node);
         }
-    } else if (request.get_command() == TEST_CMD) {
+    } else if (request.get_command() == RUN_TEST_CMD) {
         if (sys_state->is_auto_pilot_on == true) {
             response.set_data("before play-remote-control, you must stop auto-pilot");
         } else if (sys_state->is_sw_running == false) {
             response.set_data("before play-remote-control, you must start software");
         } else {
-            // TODO: add support of test scenario commands
             response = ros_exec->execute(request, ros_node);
         }
     }

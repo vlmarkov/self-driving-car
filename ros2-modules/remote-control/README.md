@@ -24,7 +24,7 @@ ros2 run remote-control remote_control [IP ADDRES] [PORT]
 ./remote-control-app [IP ADDRES] [PORT]
 ```
 
-## How to Remotely Control
+## How to Remotely Control Self-Driving Car
 ```bash
 # type `exit` to quit
 # type `build_sw` to build software
@@ -38,5 +38,5 @@ ros2 run remote-control remote_control [IP ADDRES] [PORT]
 # type `s` to move backward
 # type `a` to turn left
 # type `d` to turn right
-# type `test_cmd` to run remote-control command sequence
+# type `run_test_cmd:file_name.json` to run remote-control command sequence
 ```
