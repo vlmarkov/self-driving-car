@@ -1,4 +1,4 @@
-#include <remote-control/remote_control_client.h>
+#include <remote-control/remote-control/client.h>
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>

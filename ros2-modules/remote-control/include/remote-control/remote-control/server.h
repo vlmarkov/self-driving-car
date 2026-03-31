@@ -2,7 +2,7 @@
 
 #include <common/base_pub_sub_node.h>
 #include <remote-control/network/tcp_server.h>
-#include <remote-control/remote_control_commands.h>
+#include <remote-control/remote-control/commands.h>
 
 class ISysExecutor
 {

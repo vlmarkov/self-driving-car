@@ -1,4 +1,4 @@
-#include <remote-control/remote_control_client.h>
+#include <remote-control/remote-control/client.h>
 #include <remote-control/network/socket.h>
 
 #include <vector>

@@ -1,4 +1,4 @@
-#include <remote-control/remote_control_commands.h>
+#include <remote-control/remote-control/commands.h>
 
 namespace {
 

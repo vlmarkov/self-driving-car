@@ -1,7 +1,7 @@
 #pragma once
 
 #include <remote-control/network/tcp_client.h>
-#include <remote-control/remote_control_commands.h>
+#include <remote-control/remote-control/commands.h>
 
 #include <optional>
 
