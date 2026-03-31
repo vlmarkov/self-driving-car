@@ -1,5 +1,5 @@
 #include <remote-control/network/socket.h>
-#include <remote-control/remote_control_client.h>
+#include <remote-control/remote-control/client.h>
 
 #include <string>
 #include <iostream>

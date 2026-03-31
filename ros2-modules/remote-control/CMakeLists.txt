@@ -29,8 +29,8 @@ find_package(nlohmann_json 3.11.3 REQUIRED)
 include_directories(include)
 
 add_executable(${PROJECT_NAME} src/main.cpp
-                               src/remote_control_commands.cpp
-                               src/remote_control_server.cpp
+                               src/remote-control/commands.cpp
+                               src/remote-control/server.cpp
                                src/network/socket.cpp
                                src/network/tcp_server.cpp
 )
@@ -56,32 +56,32 @@ if(ENABLE_TESTS)
   find_package(ament_cmake_gmock REQUIRED)
 
   ament_add_gmock(tcp_client_tests tests/tcp_client_tests.cpp
-                                   src/remote_control_commands.cpp
+                                   src/remote-control/commands.cpp
                                    src/network/tcp_client.cpp)
 
   ament_add_gmock(tcp_server_tests tests/tcp_server_tests.cpp
-                                   src/remote_control_commands.cpp
+                                   src/remote-control/commands.cpp
                                    src/network/tcp_server.cpp)
 
-  ament_add_gmock(remote_control_client_tests tests/remote_control_client_tests.cpp
-                                              src/remote_control_client.cpp
-                                              src/remote_control_commands.cpp
+  ament_add_gmock(client_tests tests/client_tests.cpp
+                                              src/remote-control/client.cpp
+                                              src/remote-control/commands.cpp
                                               src/network/tcp_client.cpp)
 
-  ament_add_gmock(remote_control_server_tests tests/remote_control_server_tests.cpp
-                                              src/remote_control_server.cpp
-                                              src/remote_control_commands.cpp
+  ament_add_gmock(server_tests tests/server_tests.cpp
+                                              src/remote-control/server.cpp
+                                              src/remote-control/commands.cpp
                                               src/network/tcp_server.cpp)
-  ament_target_dependencies(remote_control_server_tests common)
+  ament_target_dependencies(server_tests common)
 
 endif()
 
 ament_package()
 
 add_executable(${PROJECT_NAME}-app
-               src/remote_control_app.cpp
-               src/remote_control_client.cpp
+               src/remote-control/app.cpp
+               src/remote-control/client.cpp
+               src/remote-control/commands.cpp
                src/network/socket.cpp
                src/network/tcp_client.cpp
-               src/remote_control_commands.cpp
 )
