@@ -28,12 +28,14 @@ void test_raspberry_camera() {
         if (!cam.getVideoFrame(image, 1000)) {
             std::cerr << "can't get image, timeout happend" << std::endl;
         } else {
-            auto status = lm.detect_lane(image);
+            auto result = lm.detect_lane(image);
+            if (result.has_value()) {
 #ifdef ENABLE_RASPBERRY_DEBUG_IMG
-            cv::imshow("Lane Detection Status", status.frame);
+                cv::imshow("Lane Detection Status", result->frame);
 #endif // ENABLE_RASPBERRY_DEBUG_IMG
-            std::cout << status.direction << std::endl;
-            std::cout << status.steer_angle << std::endl;
+                std::cout << result->direction << std::endl;
+                std::cout << result->steer_angle << std::endl;
+            }
         }
 
         ch = cv::waitKey(5);
@@ -45,7 +47,16 @@ void test_raspberry_camera() {
 
 #endif // ENABLE_RASPBERRY_BUILD
 
+void help(const char* app) {
+    std::cerr << app << " [PATH TO IMAGE]" << std::endl;
+}
+
 void test_static_image(int argc, char* argv[]) {
+    if (argc < 2) {
+        help(argv[0]);
+        return;
+    }
+
     auto frame = cv::imread(argv[1], cv::IMREAD_UNCHANGED);
     if (frame.empty()) {
         return;
@@ -53,13 +64,14 @@ void test_static_image(int argc, char* argv[]) {
 
     try {
         LaneDetectionModule lm({});
-        auto status = lm.detect_lane(std::move(frame));
+        auto result = lm.detect_lane(std::move(frame));
+        if (result.has_value()) {
+            cv::imshow("Lane Detection Status", result->frame);
+            std::cout << "direction  : " << result->direction << std::endl;
+            std::cout << "steer angle: " << result->steer_angle << std::endl;
+        }
 
-        cv::imshow("Lane Detection Status", status.frame);
-        std::cout << status.direction << std::endl;
-        std::cout << status.steer_angle << std::endl;
-
-        if (cv::waitKey(3000) >= 0) {
+        if (cv::waitKey(0) == 27 /*ESC*/) {
             return;
         }
     } catch (...) {

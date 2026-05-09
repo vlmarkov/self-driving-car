@@ -9,12 +9,13 @@ class LaneDetection
 public:
     static constexpr auto kName{"LaneDetection"};
 
-    LaneDetection(std::shared_ptr<IPubSubNode> pub_sub_node);
+    LaneDetection(std::shared_ptr<IPubSubNode> pub_sub_node, const LaneDetectionCfg& cfg);
     ~LaneDetection() = default;
 
-    void process_frame(cv::Mat frame);
+    void process_frame(const cv::Mat& frame);
 
 private:
     LaneDetectionModule impl_;
     std::shared_ptr<IPubSubNode> pub_sub_node_;
+    float steer_angle_{-360.0};
 };

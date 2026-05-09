@@ -41,8 +41,8 @@ include_directories(include)
 
 add_executable(${PROJECT_NAME} src/main.cpp
                                src/ros_module.cpp
-                               src/lane.cpp
                                src/lane_detection_module.cpp
+                               src/opencv.cpp
 )
 ament_target_dependencies(${PROJECT_NAME} common)
 
@@ -75,18 +75,10 @@ if(ENABLE_TESTS)
   enable_testing()
 
   find_package(ament_cmake_gtest REQUIRED)
-  ament_add_gtest(${PROJECT_NAME}_lane_tests tests/lane_tests.cpp
-                                             src/lane.cpp)
-
-  target_include_directories(${PROJECT_NAME}_lane_tests PUBLIC
-                             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-                             $<INSTALL_INTERFACE:include>
-  )
-  target_link_libraries(${PROJECT_NAME}_lane_tests ${OpenCV_LIBS})
-
   ament_add_gtest(${PROJECT_NAME}_module_tests tests/lane_detection_module_tests.cpp
-                                                     src/lane_detection_module.cpp
-                                                     src/lane.cpp)
+                                               src/lane_detection_module.cpp
+                                               src/opencv.cpp)
+
   target_include_directories(${PROJECT_NAME}_module_tests PUBLIC
                              $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                              $<INSTALL_INTERFACE:include>
@@ -99,9 +91,10 @@ ament_package()
 
 add_executable(${PROJECT_NAME}-app
                src/lane_detection_app.cpp
-               src/lane.cpp
                src/lane_detection_module.cpp
+               src/opencv.cpp
 )
+
 if (ENABLE_RASPBERRY_BUILD)
   TARGET_LINK_LIBRARIES(${PROJECT_NAME}-app ${OpenCV_LIBS} -llccv)
 else()
