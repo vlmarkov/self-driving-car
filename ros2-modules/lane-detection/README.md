@@ -1,10 +1,13 @@
 # Lane Detection Module
 
 ## Basic Information
-TODO: write module description
+This module allows to detect road lanes from video stream.
 
 ## Features
-TODO: write module description
+- read raw video stream from raspberry pi camera
+- transfrom video frame through pipeline: graysscale, gaussian blur, extract roi, transfrom persepctive, canny edge detection
+- after that run extract road lanes procedure
+- and detect steer angle
 
 ## How To Run
 ```
