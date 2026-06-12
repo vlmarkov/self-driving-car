@@ -61,8 +61,6 @@ int main(int argc, char * argv[])
 {
     rclcpp::init(argc, argv);
 
-    auto ld_cfg = LaneDetectionCfg();
-
     auto cfg = PubSubCfg{
         .name = LaneDetection::kName,
         .topic_publiser = std::string(LaneDetection::kName) + "Out",
@@ -71,12 +69,31 @@ int main(int argc, char * argv[])
     };
 
     auto pub_sub_node = std::make_shared<BasePubSubNode>(cfg);
+
+    LaneDetectionCfg ld_cfg;
+    pub_sub_node->declare_parameter<int>("cam_video_width", 1640);
+    pub_sub_node->declare_parameter<int>("cam_video_height", 1232);
+    pub_sub_node->declare_parameter<int>("cam_framerate", 30);
+
+    ld_cfg.cam_video_width = pub_sub_node->get_parameter("cam_video_width").as_int();
+    ld_cfg.cam_video_height = pub_sub_node->get_parameter("cam_video_height").as_int();
+    ld_cfg.cam_framerate = pub_sub_node->get_parameter("cam_framerate").as_int();
+
+    std::cout << "Starting " << LaneDetection::kName << std::endl;
+    std::cout << "cam_video_width  " << ld_cfg.cam_video_width << std::endl;
+    std::cout << "cam_video_height " << ld_cfg.cam_video_height << std::endl;
+    std::cout << "cam_framerate    " << ld_cfg.cam_framerate << std::endl;
+
     auto lane_detection = std::make_shared<LaneDetection>(pub_sub_node, ld_cfg);
 
     std::jthread thread(run, lane_detection, ld_cfg);
 
+    std::cout << "Started " << LaneDetection::kName << std::endl;
+
     rclcpp::spin(pub_sub_node);
     rclcpp::shutdown();
+
+    std::cout << "Stopped " << LaneDetection::kName << std::endl;
 
     return 0;
 }

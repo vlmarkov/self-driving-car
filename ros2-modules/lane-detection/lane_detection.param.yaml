@@ -1,0 +1,5 @@
+/lane_detection:
+  ros__parameters:
+      cam_video_width: 1640
+      cam_video_height: 1232
+      cam_framerate: 30
