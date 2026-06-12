@@ -7,7 +7,7 @@
 class LaneDetection
 {
 public:
-    static constexpr auto kName{"LaneDetection"};
+    static constexpr auto kName{"lane_detection"};
 
     LaneDetection(std::shared_ptr<IPubSubNode> pub_sub_node, const LaneDetectionCfg& cfg);
     ~LaneDetection() = default;

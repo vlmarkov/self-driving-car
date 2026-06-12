@@ -11,5 +11,5 @@ This module allows to detect road lanes from video stream.
 
 ## How To Run
 ```
-ros2 run lane-detection lane-detection
+ros2 run lane-detection lane-detection --ros-args --params-file ./ros2-modules/lane-detection/lane_detection.param.yaml
 ```
