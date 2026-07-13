@@ -5,8 +5,19 @@ BasePubSubNode::BasePubSubNode(const PubSubCfg& cfg)
     , name_(cfg.name)
 {
     publisher_ = this->create_publisher<interfaces::msg::MotionVector>(cfg.topic_publiser, DEFAULT_QUEUE_SIZE);
+    
+    subscription_msg_.is_auto_pilot_on = false;
+    subscription_msg_.acceleration = 0.0;
+    subscription_msg_.steering = 0.0;
 
     auto sub_cb = [this](interfaces::msg::MotionVector::UniquePtr mv) -> void {
+        if (subscription_msg_.is_auto_pilot_on == mv->is_auto_pilot_on &&
+            subscription_msg_.acceleration == mv->acceleration &&
+            subscription_msg_.steering == mv->steering)
+        {
+          return;
+        }
+      
         RCLCPP_INFO(this->get_logger(), "receive: auto-pilot: %d, acceleration: %f, steering: %f", 
             mv->is_auto_pilot_on, mv->acceleration, mv->steering);
 

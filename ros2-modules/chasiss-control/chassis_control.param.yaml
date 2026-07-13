@@ -1,0 +1,15 @@
+/chasiss_control:
+  ros__parameters:
+      engine_left_pwm_pin: 1
+      engine_left_reverse_pin: 0
+      engine_left_forward_pin: 2
+      engine_right_forward_pin: 3
+      engine_right_reverse_pin: 4
+      engine_right_pwm_pin: 24
+      pwm_medium: 256
+      pwm_max: 512
+      pwm_turn: 300
+      timeout_before_turn: 100
+      engine_turn_delay: 25
+      engine_turn_angle: 3
+      frames_to_get_trajectory: 10

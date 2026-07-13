@@ -1,6 +1,6 @@
 #include <main-pipeline/ros_module.h>
 
-#include <motion-calibration/ros_module.h>
+#include <chasiss-control/ros_module.h>
 
 #include <chrono>
 #include <memory>
@@ -21,7 +21,7 @@ MainPipeline::MainPipeline()
     timer_ = this->create_wall_timer(DEFAULT_TICK_TIMEOUT, cb);
 
     remote_control_module_ = add_module_("RemoteControl");
-    motion_calibration_module_ = add_module_(MotionCalibration::kName);
+    chasiss_control_module_ = add_module_(ChasisControl::kName);
 }
 
 void MainPipeline::add_module(std::string name) {
@@ -35,13 +35,13 @@ void MainPipeline::add_module(std::string name) {
 
 void MainPipeline::tick_() {
     if (remote_control_module_->data.is_auto_pilot_on == false) {
-        transfer_message_("OFF", remote_control_module_, motion_calibration_module_);
+        transfer_message_("OFF", remote_control_module_, chasiss_control_module_);
         return;
     }
 
     for (size_t i = 0; i < module_subscriptions_.size(); ++i) {
         auto& from = module_subscriptions_[i];
-        auto& to = (i == module_subscriptions_.size() - 1) ? motion_calibration_module_ : module_subscriptions_[i + 1];
+        auto& to = (i == module_subscriptions_.size() - 1) ? chasiss_control_module_ : module_subscriptions_[i + 1];
 
         transfer_message_("ON", from, to);
     }
