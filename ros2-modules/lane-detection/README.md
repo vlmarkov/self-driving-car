@@ -7,6 +7,10 @@ Uses OpenCV to extract from video stream images road lanes and steer angle to dr
 - transfrom video frame through pipeline: graysscale, gaussian blur, extract roi, transfrom persepctive, canny edge detection
 - detect road lanes
 - convert road lane to steer angle
+- support detection of steer angle by two or one lane
+
+## Limitations
+- it has to be something contrast, like white background and black bold lines
 
 ## How To Run
 ```
