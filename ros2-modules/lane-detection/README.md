@@ -1,13 +1,12 @@
 # Lane Detection Module
 
-## Basic Information
-This module allows to detect road lanes from video stream.
+Uses OpenCV to extract from video stream images road lanes and steer angle to drive self-driving robot car.
 
 ## Features
-- read raw video stream from raspberry pi camera
+- read raw video stream from Raspberry Pi camera
 - transfrom video frame through pipeline: graysscale, gaussian blur, extract roi, transfrom persepctive, canny edge detection
-- after that run extract road lanes procedure
-- and detect steer angle
+- detect road lanes
+- convert road lane to steer angle
 
 ## How To Run
 ```
