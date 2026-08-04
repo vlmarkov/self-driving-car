@@ -1,7 +1,6 @@
 # Remote Control
 
-## Basic Information
-This module allows to control self-driving car remotely.
+Allows to control self-driving robot car remotely via Wi-Fi.
 
 ## Features
 - build/update self-driving software
