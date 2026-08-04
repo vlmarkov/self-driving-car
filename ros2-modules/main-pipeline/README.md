@@ -1,10 +1,11 @@
 # Main Pipeline Module
 
-## Basic Information
-TODO: write module description
+Communication pipeline between ROS2 modules.
 
 ## Features
-TODO: write module description
+- linear data transfer
+- from camera to motor
+- this approach has its own limitations
 
 ## How To Run
 ```
