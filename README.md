@@ -45,8 +45,8 @@ make tests
 # How to run
 ```
 sudo bash -c "source /opt/ros/jazzy/setup.bash && source install/local_setup.bash && ros2 run main-pipeline main_pipeline"
-sudo bash -c "source /opt/ros/jazzy/setup.bash && source install/local_setup.bash && ros2 run lane-detection lane-detection"
-sudo bash -c "chmod g+rw /dev/gpiomem0 && source /opt/ros/jazzy/setup.bash && source install/local_setup.bash && ros2 run chasiss-control chasiss-control"
+sudo bash -c "source /opt/ros/jazzy/setup.bash && source install/local_setup.bash && ros2 run lane-detection lane-detection --ros-args --params-file ./ros2-modules/lane-detection/lane_detection.param.yaml"
+sudo bash -c "chmod g+rw /dev/gpiomem0 && source /opt/ros/jazzy/setup.bash && source install/local_setup.bash && ros2 run chasiss-control chasiss-control -ros-args --params-file ./ros2-modules/chasiss-control/chassis_control.param.yaml"
 ```
 # How to run with remote control
 ```

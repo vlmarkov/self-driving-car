@@ -13,7 +13,7 @@ ENABLE_WIRING_PI_LIB       := OFF
 ENABLE_RASPBERRY_BUILD     := OFF
 ENABLE_RASPBERRY_DEBUG_IMG := OFF
 
-all: interfaces common lane-detection remote-control motion-calibration main-pipeline
+all: interfaces common lane-detection remote-control chasiss-control main-pipeline
 
 interfaces:
 	colcon build --packages-select interfaces --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD)
@@ -33,6 +33,12 @@ lane-detection-raspberry-no-img:
 lane-detection-raspberry:
 	colcon build --packages-select lane-detection --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD) -DENABLE_RASPBERRY_BUILD=ON -DENABLE_RASPBERRY_DEBUG_IMG=ON
 
+chasiss-control:
+	colcon build --packages-select chasiss-control --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD) -DENABLE_WIRING_PI_LIB=$(ENABLE_WIRING_PI_LIB)
+
+chasiss-control-raspberry:
+	colcon build --packages-select chasiss-control --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD) -DENABLE_WIRING_PI_LIB=ON
+
 remote-control:
 	colcon build --packages-select remote-control --cmake-args -DENABLE_TESTS=$(ENABLE_TESTS) -DENABLE_COMPILER_OPTIONS=$(ENABLE_COMPILER_OPTIONS) -DENABLE_LATEST_CPP_STANDARD=$(ENABLE_LATEST_CPP_STANDARD) -DENABLE_WIRING_PI_LIB=$(ENABLE_WIRING_PI_LIB)
 
@@ -41,6 +47,7 @@ tests:
 	colcon test --packages-select common --event-handlers console_direct+
 	colcon test --packages-select main-pipeline --event-handlers console_direct+
 	colcon test --packages-select lane-detection --event-handlers console_direct+
+	colcon test --packages-select chasiss-control --event-handlers console_direct+
 	colcon test --packages-select remote-control --event-handlers console_direct+
 
 clean:

@@ -171,7 +171,7 @@ std::vector<cv::Point> extract_trajectory_lane_points(
     return trajectory_points;
 }
 
-std::optional<float> get_drive_angle(const std::vector<cv::Point>& points) {
+std::optional<int> get_drive_angle(const std::vector<cv::Point>& points) {
     // https://www.kaggle.com/code/sujaykapadnis/lane-detection-for-self-driving-cars
     // https://github.com/RobuRishabh/Lane_detector_Using_OpenCV_for_autonomous_vehicle
     // https://github.com/tatsuyah/Lane-Lines-Detection-Python-OpenCV
@@ -185,7 +185,7 @@ std::optional<float> get_drive_angle(const std::vector<cv::Point>& points) {
 
     const auto& bottom = points.front();
     const auto& top = points.back();
-    const float slope = std::atan((top.y - bottom.y) / (top.x - bottom.x)) * (180 / 3.14159265);
+    const float slope = (top.x - bottom.x) != 0 ? std::atan((top.y - bottom.y) / (top.x - bottom.x)) * (180 / 3.14159265) : 0.0;
 
     return slope < 0 ? -(90 + slope) : (90 - slope);
 }
@@ -288,16 +288,16 @@ std::optional<LaneDetectionStatus> LaneDetectionModule::detect_lane(const cv::Ma
     }
 
     std::string direction = "Head straight";
-    const float forward_deviation_angle = 3.0;
-    if ((angle.value() < 0) && (std::abs(angle.value()) > forward_deviation_angle)) {
+    const int forward_deviation_angle = 3;
+    if ((angle.value() < 0) && (std::abs(angle.value()) >= forward_deviation_angle)) {
         direction = "Turn right";
-    } else if ((angle.value() > 0) && (std::abs(angle.value()) > forward_deviation_angle)) {
+    } else if ((angle.value() > 0) && (std::abs(angle.value()) >= forward_deviation_angle)) {
         direction = "Turn left";
     }
 
     return LaneDetectionStatus{
         .frame = image,
         .direction = direction,
-        .steer_angle= angle.value()
+        .steer_angle= std::abs(angle.value()) >= forward_deviation_angle ? angle.value() : 0
     };
 }
